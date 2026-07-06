@@ -27,21 +27,18 @@ public class CategoriaService {
         return repository.findAll();
     }
 
-    public Categoria obtenerPorId(int id) {
+    public Categoria obtenerPorId(Integer id) {
         return repository.findById(id).orElseThrow(() -> new CategoriaNoEncontradaException("Categoría con ID " + id + " no encontrada"));
     }
 
-    public Categoria actualizar(int id, Categoria datos) {
-        
+    public Categoria actualizar(Integer id, Categoria datos) {
         Categoria existente = obtenerPorId(id);
         existente.setNombre(datos.getNombre());
         return existente;
     }
 
-    public void eliminar(int id) {
+    public void eliminar(Integer id) {
         Categoria existente = obtenerPorId(id);
         repository.delete(existente);
     }   
-
-
 }

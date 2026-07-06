@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
 
-import com.techlab.productos_ecologicos.exception.CategoriaNoEncontradaException;
 import com.techlab.productos_ecologicos.models.Categoria;
 import com.techlab.productos_ecologicos.services.CategoriaService;
 
@@ -31,43 +30,27 @@ public class CategoriaController {
 
     @GetMapping
     public ResponseEntity<List<Categoria>> listarTodos() {
-        List<Categoria> categorias = service.listarTodos();
-        return ResponseEntity.ok(categorias);
+        return ResponseEntity.ok(service.listarTodos());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Categoria> obtenerCategoria(@PathVariable int id) {
-        try {
-            Categoria categoria = service.obtenerPorId(id);
-            return ResponseEntity.ok(categoria);
-        } catch (CategoriaNoEncontradaException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Categoria> obtenerCategoria(@PathVariable Integer id) {
+        return ResponseEntity.ok(service.obtenerPorId(id)); 
     }
 
     @PostMapping("")
     public ResponseEntity<Categoria> crearCategoria( @Valid @RequestBody Categoria categoria) {
-        Categoria nuevaCategoria = service.guardar(categoria);
-        return ResponseEntity.ok(nuevaCategoria);
+        return ResponseEntity.ok(service.guardar(categoria));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Categoria> actualizarCategoria(@Valid @PathVariable int id, @RequestBody Categoria categoria) {
-        try {
-            Categoria categoriaActualizada = service.actualizar(id, categoria);
-            return ResponseEntity.ok(categoriaActualizada);
-        } catch (CategoriaNoEncontradaException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Categoria> actualizarCategoria(@Valid @PathVariable Integer id, @RequestBody Categoria categoria) {
+        return ResponseEntity.ok(service.actualizar(id, categoria));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarCategoria(@PathVariable int id) {
-        try {
-            service.eliminar(id);
-            return ResponseEntity.noContent().build();
-        } catch (CategoriaNoEncontradaException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Void> eliminarCategoria(@PathVariable Integer id) {
+        service.eliminar(id);
+        return ResponseEntity.noContent().build();
     }
 }

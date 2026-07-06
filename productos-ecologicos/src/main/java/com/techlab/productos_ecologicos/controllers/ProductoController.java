@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
 
-import com.techlab.productos_ecologicos.exception.ProductoNoEncontradoException;
 import com.techlab.productos_ecologicos.models.Producto;
 import com.techlab.productos_ecologicos.services.ProductoService;
 
@@ -29,77 +28,41 @@ public class ProductoController {
     }
 
     @GetMapping 
-
-        public ResponseEntity<List<Producto>> listarTodos() {
-            List<Producto> producto = service.listarTodos();
-            return ResponseEntity.ok(producto);
-        }
+    public ResponseEntity<List<Producto>> listarTodos() {
+        return ResponseEntity.ok(service.listarTodos());
+    }
 
     @GetMapping("/{id}") 
-
-        public ResponseEntity<Producto> obtenerProducto(@PathVariable int id) {
-            try {
-                Producto producto = service.obtenerPorId(id);
-                return ResponseEntity.ok(producto);
-            } catch (ProductoNoEncontradoException e) {
-                return ResponseEntity.notFound().build();
-            }
-        }
+    public ResponseEntity<Producto> obtenerProducto(@PathVariable Integer id) {
+        return ResponseEntity.ok(service.obtenerPorId(id));
+    }
 
     @GetMapping("/nombre/{nombre}") 
-
     public ResponseEntity<List<Producto>> buscarPorNombre(@PathVariable String nombre) {
-        try{
-            List<Producto> producto = service.buscarPorNombre(nombre);
-            return ResponseEntity.ok(producto);
-        } catch (ProductoNoEncontradoException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(service.buscarPorNombre(nombre)); 
     }
 
     @GetMapping("/categoria/{categoria}") 
     
     public ResponseEntity<List<Producto>> buscarPorCategoria(@PathVariable String categoria) {
-        try {
-            List<Producto> producto = service.buscarPorCategoria(categoria);
-            return ResponseEntity.ok(producto);
-        } catch (ProductoNoEncontradoException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(service.buscarPorCategoria(categoria));
     }
 
     @PostMapping("") 
-
     public ResponseEntity<Producto> crearProducto(@Valid @RequestBody Producto producto) {
-        try {
-            Producto nuevoProducto = service.guardar(producto);
-            return ResponseEntity.ok(nuevoProducto);
-        } catch (ProductoNoEncontradoException e) {
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.ok(service.guardar(producto));
     }
 
 
     @PutMapping("/{id}") 
-
-        public ResponseEntity<Producto> actualizarProducto(@Valid @PathVariable int id, @RequestBody Producto datos) {
-            try {
-                Producto productoActualizado = service.actualizar(id, datos);
-                return ResponseEntity.ok(productoActualizado);
-            } catch (ProductoNoEncontradoException e) {
-                return ResponseEntity.notFound().build();
-            }
-        }
+    public ResponseEntity<Producto> actualizarProducto(@Valid @PathVariable Integer id, @RequestBody Producto datos) {
+        return ResponseEntity.ok(service.actualizar(id, datos));
+    }
 
     @DeleteMapping  ("/{id}") 
-    
-    public ResponseEntity<Void> eliminarProducto(@PathVariable int id) {
-        try {
-            service.eliminar(id);
-            return ResponseEntity.noContent().build();
-        } catch (ProductoNoEncontradoException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Void> eliminarProducto(@PathVariable Integer id) {
+        service.eliminar(id);
+        return ResponseEntity.noContent().build();
     }
 }
 

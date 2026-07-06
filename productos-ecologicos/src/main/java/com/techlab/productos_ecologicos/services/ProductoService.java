@@ -28,22 +28,26 @@ public class ProductoService {
     }
     
     public Producto obtenerPorId(Integer id) {
-        return repository.findById(id).orElseThrow(() -> new ProductoNoEncontradoException("No se encontró un producto con id " + id));
+        return repository.findById(id).orElseThrow(() -> 
+        new ProductoNoEncontradoException("No se encontró un producto con id " + id));
     }
 
     public Producto actualizar(Integer id, Producto datos) {
-        Producto p = repository.findById(id).orElseThrow(() -> new ProductoNoEncontradoException("No se encontró un producto con id " + id));
+        Producto p = obtenerPorId(id);
 
         p.setNombre(datos.getNombre());
         p.setPrecio(datos.getPrecio());
         p.setStock(datos.getStock());
         p.setCategoria(datos.getCategoria());
-        p.setDescripcion(datos.getDescripcion());   
+        p.setDescripcion(datos.getDescripcion());
+        if (datos.getImagenUrl() != null) {
+            p.setImagenUrl(datos.getImagenUrl());
+        }   
         return repository.save(p);
     }
 
     public void eliminar(Integer id) {
-        Producto p = repository.findById(id).orElseThrow(() -> new ProductoNoEncontradoException("No se encontró un producto con id " + id));
+        Producto p = obtenerPorId(id);
         repository.delete(p);
     }
 
@@ -52,7 +56,7 @@ public class ProductoService {
     }
 
     public List<Producto> buscarPorCategoria(String categoria) {
-        return repository.buscarPorCategoria(categoria);
+        return repository.findByCategoriaNombreContainingIgnoreCase(categoria);
     }
 }
 

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 
@@ -24,9 +25,10 @@ public class Producto {
     @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
 
+    @NotNull(message = "El precio del producto no puede estar vacío")
     @Positive(message = "El precio debe ser mayor que cero")
     @Column(name = "precio", nullable = false)
-    private double precio;
+    private Double precio;
 
     @NotBlank(message = "La descripción del producto no puede estar vacía")
     @Column(name = "descripcion", length = 200)
@@ -37,12 +39,10 @@ public class Producto {
     @Column(name = "stock", nullable = false)
     private Integer stock;
 
+    @Column(name = "imagen_url", length = 200)
+    private String imagenUrl;
+
     @ManyToOne
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
-
-
-
-    public Categoria getCategoria() { return categoria;}
-    public void setCategoria(Categoria categoria) { this.categoria = categoria;}
 }

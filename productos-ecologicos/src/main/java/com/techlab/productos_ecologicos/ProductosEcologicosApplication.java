@@ -10,116 +10,130 @@ import com.techlab.productos_ecologicos.models.Producto;
 import com.techlab.productos_ecologicos.services.CategoriaService;
 import com.techlab.productos_ecologicos.services.ProductoService;
 
-
 @SpringBootApplication
 public class ProductosEcologicosApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ProductosEcologicosApplication.class, args);
-	}	
-		
+    public static void main(String[] args) {
+        SpringApplication.run(ProductosEcologicosApplication.class, args);
+    }
+
     @Bean
     CommandLineRunner cargarDatos(CategoriaService categoriaService,
-                                  ProductoService productoService) {
+            ProductoService productoService) {
         return args -> {
             if (categoriaService.listarTodos().isEmpty()) {
 
-                Categoria ropa = categoriaService.guardar(
-                    new Categoria(null, "Ropa masculina", "Indumentaria para hombre"));
-                Categoria ropaFem = categoriaService.guardar(
-                    new Categoria(null, "Ropa femenina", "Indumentaria para mujer"));
-                Categoria joyeria = categoriaService.guardar(
-                    new Categoria(null, "Joyería", "Anillos, collares y accesorios"));
-                Categoria electronica = categoriaService.guardar(
-                    new Categoria(null, "Electrónica", "Dispositivos y accesorios tecnológicos"));
+                Categoria bolsasTextiles = categoriaService.guardar(
+                        new Categoria(null, "Bolsas y textiles reutilizables",
+                                "Bolsas de tela y textiles para reemplazar el plástico descartable"));
+                Categoria ceroHuella = categoriaService.guardar(
+                        new Categoria(null, "Cero Huella - Vajilla reutilizable",
+                                "Vasos, tazas y botellas reutilizables para reducir residuos"));
+                Categoria huertaJardin = categoriaService.guardar(
+                        new Categoria(null, "Huerta y jardín",
+                                "Kits y accesorios para cultivar en casa de forma sustentable"));
+                Categoria papeleria = categoriaService.guardar(
+                        new Categoria(null, "Papelería sustentable",
+                                "Artículos de librería fabricados con materiales reciclados o plantables"));
+                Categoria energiaHogar = categoriaService.guardar(
+                        new Categoria(null, "Energía e iluminación",
+                                "Luminarias solares y de bajo consumo para el hogar"));
 
-                // Ropa masculina
+                // Bolsas y textiles reutilizables
                 productoService.guardar(new Producto(null,
-                    "Mochila plegable para notebook", 109.95, "Mochila plegable para notebook", 20,
-                    "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_t.png",
-                    ropa));
+                        "Bolsa reutilizable de tela modelo clásico", 9.99, "Bolsa reutilizable de tela modelo clásico",
+                        40,
+                        "https://i.postimg.cc/crY80KCz/bolsa-Reutilizable.jpg",
+                        bolsasTextiles));
                 productoService.guardar(new Producto(null,
-                    "Camiseta slim fit manga larga", 22.30, "Camiseta slim fit manga larga", 50,
-                    "https://fakestoreapi.com/img/71-3HjGNDUL._AC_SY879._SX._UX._SY._UY_t.png",
-                    ropa));
+                        "Bolsa reutilizable de tela modelo mediano", 10.99, "Bolsa reutilizable de tela modelo mediano",
+                        35,
+                        "https://i.postimg.cc/xX2NC0b1/bolsa-Reutilizable-2.jpg",
+                        bolsasTextiles));
                 productoService.guardar(new Producto(null,
-                    "Campera de algodón", 55.99, "Campera de algodón", 30,
-                    "https://fakestoreapi.com/img/71li-ujtlUL._AC_UX679_t.png",
-                    ropa));
+                        "Bolsa reutilizable de tela modelo grande", 12.50, "Bolsa reutilizable de tela modelo grande",
+                        30,
+                        "https://i.postimg.cc/8sxr2dpW/bolsa-Reutilizable-3.jpg",
+                        bolsasTextiles));
                 productoService.guardar(new Producto(null,
-                    "Pantalón casual slim fit", 15.99, "Pantalón casual slim fit", 40,
-                    "https://fakestoreapi.com/img/71YXzeOuslL._AC_UY879_t.png",
-                    ropa));
+                        "Bolsas Rock & Vida edición especial", 13.99, "Bolsas Rock & Vida edición especial", 20,
+                        "https://i.postimg.cc/NyWcs05N/bolsas-Rock-amp-vida.jpg",
+                        bolsasTextiles));
 
-                // Joyería
+                // Cero Huella - Vajilla reutilizable
                 productoService.guardar(new Producto(null,
-                    "Pulsera dragón oro y plata", 695.00,"Pulsera dragón oro y plata", 5,
-                    "https://fakestoreapi.com/img/71pWzhdJNwL._AC_UL640_QL65_ML3_t.png",
-                    joyeria));
+                        "Botella Cero Huella acero inoxidable", 18.99, "Botella Cero Huella acero inoxidable", 25,
+                        "https://i.postimg.cc/qNxh698X/botella-Cero-Huella.jpg",
+                        ceroHuella));
                 productoService.guardar(new Producto(null,
-                    "Anillo de oro macizo micropavé", 168.00, "Anillo de oro macizo micropavé", 8,
-                    "https://fakestoreapi.com/img/61sbMiUnoGL._AC_UL640_QL65_ML3_t.png",
-                    joyeria));
+                        "Set de botellas reutilizables", 22.50, "Set de botellas reutilizables", 18,
+                        "https://i.postimg.cc/zHh3zMzh/botellas-Reutilizables.jpg",
+                        ceroHuella));
                 productoService.guardar(new Producto(null,
-                    "Anillo de compromiso bañado en oro blanco", 9.99, "Anillo de compromiso bañado en oro blanco", 15,
-                    "https://fakestoreapi.com/img/71YAIFU48IL._AC_UL640_QL65_ML3_t.png",
-                    joyeria));
+                        "Taza Cero Huella", 11.99, "Taza Cero Huella", 30,
+                        "https://i.postimg.cc/fkSVf3cb/taza-Cero-Huella-2.jpg",
+                        ceroHuella));
                 productoService.guardar(new Producto(null,
-                    "Aros dobles de acero inoxidable rosado", 10.99, "Aros dobles de acero inoxidable rosado",   12,
-                    "https://fakestoreapi.com/img/51UDEzMJVpL._AC_UL640_QL65_ML3_t.png",
-                    joyeria));
+                        "Vaso Cero Huella 300cc", 7.99, "Vaso Cero Huella 300cc", 45,
+                        "https://i.postimg.cc/7fgbjpQ8/vaso-Cerohuella-De300cc.jpg",
+                        ceroHuella));
+                productoService.guardar(new Producto(null,
+                        "Vaso Cero Huella 500cc", 9.50, "Vaso Cero Huella 500cc", 40,
+                        "https://i.postimg.cc/hJGjzh4c/vaso-Cero-Huella-De500cc.jpg",
+                        ceroHuella));
+                productoService.guardar(new Producto(null,
+                        "Kit de cubiertos reutilizables para llevar", 8.75,
+                        "Kit de cubiertos reutilizables para llevar", 33,
+                        "https://i.postimg.cc/NyP01YLT/kit-De-Cubiertos.jpg",
+                        ceroHuella));
 
-                // Electrónica
+                // Huerta y jardín
                 productoService.guardar(new Producto(null,
-                    "Disco externo portátil 2TB USB 3.0", 64.00, "Disco externo portátil 2TB USB 3.0", 25,
-                    "https://fakestoreapi.com/img/61IBBVJvSDL._AC_SY879_t.png",
-                    electronica));
+                        "Kit de siembra para huerta en casa", 15.99, "Kit de siembra para huerta en casa", 22,
+                        "https://i.postimg.cc/mzzgjqFn/kit-De-Siembra.jpg",
+                        huertaJardin));
                 productoService.guardar(new Producto(null,
-                    "SSD interno 1TB SATA III", 109.00, "SSD interno 1TB SATA III", 18,
-                    "https://fakestoreapi.com/img/61U7T1koQqL._AC_SX679_t.png",
-                    electronica));
+                        "Pico auto-regable para macetas", 6.99, "Pico auto-regable para macetas", 28,
+                        "https://i.postimg.cc/nC8CRH2G/pico-Auto-Regable2.jpg",
+                        huertaJardin));
                 productoService.guardar(new Producto(null,
-                    "SSD 256GB 3D NAND SATA III", 109.00, "SSD 256GB 3D NAND SATA III", 22,
-                    "https://fakestoreapi.com/img/71kWymZ+c+L._AC_SX679_t.png",
-                    electronica));
-                productoService.guardar(new Producto(null,
-                    "Disco externo 4TB para PlayStation 4", 114.00, "Disco externo 4TB para PlayStation 4", 10,
-                    "https://fakestoreapi.com/img/61mtL65D4cL._AC_SX679_t.png",
-                    electronica));
-                productoService.guardar(new Producto(null,
-                    "Monitor Full HD 21.5\" IPS", 599.00, "Monitor Full HD 21.5\" IPS", 7,
-                    "https://fakestoreapi.com/img/81QpkIctqPL._AC_SX679_t.png",
-                    electronica));
-                productoService.guardar(new Producto(null,
-                    "Monitor curvo gaming 49\" 144Hz QLED", 999.99, "Monitor curvo gaming 49\" 144Hz QLED", 4,
-                    "https://fakestoreapi.com/img/81Zt42ioCgL._AC_SX679_t.png",
-                    electronica));
+                        "Cesto dual para separación de residuos", 24.99, "Cesto dual para separación de residuos", 15,
+                        "https://i.postimg.cc/N955VFZp/cesto-Dual.jpg",
+                        huertaJardin));
 
-                // Ropa femenina
+                // Papelería sustentable
                 productoService.guardar(new Producto(null,
-                    "Campera 3 en 1 para nieve", 56.99, "Campera 3 en 1 para nieve", 20,
-                    "https://fakestoreapi.com/img/51Y5NI-I5jL._AC_UX679_t.png",
-                    ropaFem));
+                        "Anotadores de papel reciclado", 4.50, "Anotadores de papel reciclado", 50,
+                        "https://i.postimg.cc/bsjw0mY6/anotadores.jpg",
+                        papeleria));
                 productoService.guardar(new Producto(null,
-                    "Campera moto cuero sintético con capucha", 29.95, "Campera moto cuero sintético con capucha", 35,
-                    "https://fakestoreapi.com/img/81XH0e8fefL._AC_UY879_t.png",
-                    ropaFem));
+                        "Lapicera ecológica de material reciclado", 3.20, "Lapicera ecológica de material reciclado",
+                        60,
+                        "https://i.postimg.cc/zbsXcjCG/lapicera.jpg",
+                        papeleria));
                 productoService.guardar(new Producto(null,
-                    "Campera impermeable con capucha", 39.99, "Campera impermeable con capucha", 28,
-                    "https://fakestoreapi.com/img/71HblAHs5xL._AC_UY879_-2t.png",
-                    ropaFem));
+                        "Lápices de colores de madera certificada", 5.99, "Lápices de colores de madera certificada",
+                        45,
+                        "https://i.postimg.cc/RNQVgwNv/lapices-Colores.png",
+                        papeleria));
                 productoService.guardar(new Producto(null,
-                    "Remera manga corta escote bote", 9.85, "Remera manga corta escote bote", 45,
-                    "https://fakestoreapi.com/img/71z3kpMAYsL._AC_UY879_t.png",
-                    ropaFem));
+                        "Lápiz plantable (germina al enterrarlo)", 2.99, "Lápiz plantable (germina al enterrarlo)", 70,
+                        "https://i.postimg.cc/Cd8Kf30B/lapiz-Plantable.jpg",
+                        papeleria));
+
+                // Energía e iluminación
                 productoService.guardar(new Producto(null,
-                    "Remera deportiva manga corta", 7.95, "Remera deportiva manga corta", 50,
-                    "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_t.png",
-                    ropaFem));
+                        "Luminaria solar de tres lámparas", 34.99, "Luminaria solar de tres lámparas", 12,
+                        "https://i.postimg.cc/jW8DZP3D/luminaria-Tres-Lamparas.jpg",
+                        energiaHogar));
                 productoService.guardar(new Producto(null,
-                    "Remera casual de algodón manga corta", 12.99, "Remera casual de algodón manga corta",  38,
-                    "https://fakestoreapi.com/img/61pHAEJ4NML._AC_UX679_t.png",
-                    ropaFem));
+                        "Luminaria solar de una lámpara", 19.99, "Luminaria solar de una lámpara", 20,
+                        "https://i.postimg.cc/mzJtGRsR/luminaria-Una-Lampara.jpg",
+                        energiaHogar));
+                productoService.guardar(new Producto(null,
+                        "Velador de escritorio bajo consumo", 16.50, "Velador de escritorio bajo consumo", 18,
+                        "https://i.postimg.cc/Xr4XWQTZ/velador-Escritorio.jpg",
+                        energiaHogar));
             }
         };
     }

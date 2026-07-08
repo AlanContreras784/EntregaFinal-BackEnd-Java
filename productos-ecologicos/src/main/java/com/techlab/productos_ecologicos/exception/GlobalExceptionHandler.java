@@ -70,6 +70,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
+    // Se dispara cuando Hibernate intenta resolver (fetch EAGER) una relación
+    // @ManyToOne cuyo id ya no existe en la base — por ejemplo, un CarritoProducto
+    // que apunta a un producto que fue eliminado o recreado con otros ids.
+    // Sin este handler, este caso caía en la excepción genérica y devolvía 500.
+    @ExceptionHandler(jakarta.persistence.EntityNotFoundException.class)
+    public ResponseEntity<String> manejarEntidadNoEncontrada(
+            jakarta.persistence.EntityNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                "El carrito contiene una referencia a un producto que ya no existe. " +
+                "Vacíe el carrito o elimínelo y cree uno nuevo.");
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> manejarExcepcionGenerica(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

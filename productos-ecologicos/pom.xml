@@ -88,6 +88,13 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<!-- Hace que el compilador conserve los nombres de los parámetros
+					     (ej: "id" en @PathVariable Integer id) en el .class generado.
+					     Sin esto, Spring no puede resolver @PathVariable/@RequestParam
+					     sin indicar el nombre explícitamente, y devuelve 500. -->
+					<parameters>true</parameters>
+				</configuration>
 				<executions>
 					<execution>
 						<id>default-compile</id>

@@ -33,18 +33,17 @@ public class ProductoController {
     }
 
     @GetMapping("/{id}") 
-    public ResponseEntity<Producto> obtenerProducto(@PathVariable Integer id) {
+    public ResponseEntity<Producto> obtenerProducto(@PathVariable("id") Integer id) {
         return ResponseEntity.ok(service.obtenerPorId(id));
     }
 
     @GetMapping("/nombre/{nombre}") 
-    public ResponseEntity<List<Producto>> buscarPorNombre(@PathVariable String nombre) {
+    public ResponseEntity<List<Producto>> buscarPorNombre(@PathVariable("nombre") String nombre) {
         return ResponseEntity.ok(service.buscarPorNombre(nombre)); 
     }
 
     @GetMapping("/categoria/{categoria}") 
-    
-    public ResponseEntity<List<Producto>> buscarPorCategoria(@PathVariable String categoria) {
+    public ResponseEntity<List<Producto>> buscarPorCategoria(@PathVariable("categoria") String categoria) {
         return ResponseEntity.ok(service.buscarPorCategoria(categoria));
     }
 
@@ -55,14 +54,13 @@ public class ProductoController {
 
 
     @PutMapping("/{id}") 
-    public ResponseEntity<Producto> actualizarProducto(@Valid @PathVariable Integer id, @RequestBody Producto datos) {
+    public ResponseEntity<Producto> actualizarProducto(@PathVariable("id") Integer id, @Valid @RequestBody Producto datos) {
         return ResponseEntity.ok(service.actualizar(id, datos));
     }
 
-    @DeleteMapping  ("/{id}") 
-    public ResponseEntity<Void> eliminarProducto(@PathVariable Integer id) {
+    @DeleteMapping ("/{id}") 
+    public ResponseEntity<Void> eliminarProducto(@PathVariable("id") Integer id) {
         service.eliminar(id);
         return ResponseEntity.noContent().build();
     }
 }
-

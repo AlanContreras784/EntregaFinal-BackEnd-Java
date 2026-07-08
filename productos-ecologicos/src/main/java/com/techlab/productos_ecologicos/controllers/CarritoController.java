@@ -26,13 +26,13 @@ public class CarritoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Carrito> obtenerCarrito(@PathVariable Integer id) {
+    public ResponseEntity<Carrito> obtenerCarrito(@PathVariable("id") Integer id) {
         return ResponseEntity.ok(service.obtenerPorId(id));
     }
 
     // Devuelve el precio total de todos los productos en el carrito
     @GetMapping("/{id}/resumen")
-    public ResponseEntity<CarritoResumenDTO> resumen(@PathVariable Integer id) {
+    public ResponseEntity<CarritoResumenDTO> resumen(@PathVariable("id") Integer id) {
         return ResponseEntity.ok(service.obtenerResumen(id));
     }
 
@@ -46,35 +46,35 @@ public class CarritoController {
     // No usa @RequestBody — toda la información está en la URL.
     @PostMapping("/{carritoId}/productos/{productoId}")
     public ResponseEntity<Carrito> agregarProducto(
-            @PathVariable Integer carritoId,
-            @PathVariable Integer productoId) {
+            @PathVariable("carritoId") Integer carritoId,
+            @PathVariable("productoId") Integer productoId) {
         return ResponseEntity.ok(service.agregarProducto(carritoId, productoId));
     }
 
     // Descuenta un producto del carrito y devuelve la cantidad al stock
     @PutMapping("/{carritoId}/productos/{productoId}/descontar")
     public ResponseEntity<Carrito> descontarProducto(
-            @PathVariable Integer carritoId,
-            @PathVariable Integer productoId) {
+            @PathVariable("carritoId") Integer carritoId,
+            @PathVariable("productoId") Integer productoId) {
         return ResponseEntity.ok(service.descontarProducto(carritoId, productoId));
     }
 
     // Elimina un producto del carrito y devuelve la cantidad al stock
     @DeleteMapping("/{carritoId}/productos/{productoId}")
     public ResponseEntity<Carrito> eliminarProducto(
-            @PathVariable Integer carritoId,
-            @PathVariable Integer productoId) {
+            @PathVariable("carritoId") Integer carritoId,
+            @PathVariable("productoId") Integer productoId) {
         return ResponseEntity.ok(service.eliminarProducto(carritoId, productoId));
     }
     
     // Vacía el carrito sin eliminarlo — el usuario puede seguir usándolo
     @DeleteMapping("/{id}/vaciar")
-    public ResponseEntity<Carrito> vaciar(@PathVariable Integer id) {
+    public ResponseEntity<Carrito> vaciar(@PathVariable("id") Integer id) {
         return ResponseEntity.ok(service.vaciar(id));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
+    public ResponseEntity<Void> eliminar(@PathVariable("id") Integer id) {
         service.eliminar(id);
         return ResponseEntity.ok().build();
     }

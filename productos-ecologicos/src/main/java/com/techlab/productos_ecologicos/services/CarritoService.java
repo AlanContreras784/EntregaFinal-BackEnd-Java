@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.techlab.productos_ecologicos.dto.CarritoResumenDTO;
 import com.techlab.productos_ecologicos.exception.CarritoNoEncontradoException;
 import com.techlab.productos_ecologicos.exception.ProductoNoEncontradoEnElCarritoException;
 import com.techlab.productos_ecologicos.exception.StockInsuficienteException;
@@ -143,11 +144,23 @@ public class CarritoService {
         carritoRepository.delete(carrito);
     }
 
-    public int obtenerCantidadTotal(Integer carritoId) {
+    // Calcula el subtotal, el envío y el total del carrito
+    public CarritoResumenDTO obtenerResumen(Integer carritoId) {
         Carrito carrito = obtenerPorId(carritoId);
-        return carrito.getProductos()
-                .stream()
-                .mapToInt(CarritoProducto::getCantidad)
-                .sum();
+        int cantidad = 0;
+        double subtotal = 0;
+
+        for (CarritoProducto cp : carrito.getProductos()) {
+            cantidad += cp.getCantidad();
+            subtotal += cp.getCantidad() * cp.getProducto().getPrecio();
+        }
+        double envio = 0.0;
+        double total = subtotal + envio;
+        return new CarritoResumenDTO(
+                cantidad,
+                subtotal,
+                envio,
+                total
+        );
     }
 }

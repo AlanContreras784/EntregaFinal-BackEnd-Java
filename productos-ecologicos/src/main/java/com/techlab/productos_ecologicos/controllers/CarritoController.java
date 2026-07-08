@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
+import com.techlab.productos_ecologicos.dto.CarritoResumenDTO;
 import com.techlab.productos_ecologicos.models.Carrito;
 import com.techlab.productos_ecologicos.services.CarritoService;
 
@@ -30,9 +30,10 @@ public class CarritoController {
         return ResponseEntity.ok(service.obtenerPorId(id));
     }
 
-    @GetMapping("/{id}/cantidad-total")
-    public ResponseEntity<Integer> obtenerCantidadTotal(@PathVariable Integer id) {
-        return ResponseEntity.ok(service.obtenerCantidadTotal(id));
+    // Devuelve el precio total de todos los productos en el carrito
+    @GetMapping("/{id}/resumen")
+    public ResponseEntity<CarritoResumenDTO> resumen(@PathVariable Integer id) {
+        return ResponseEntity.ok(service.obtenerResumen(id));
     }
 
     // Crea un carrito vacío — debe existir antes de agregar productos

@@ -36,10 +36,7 @@ La aplicación permite administrar productos, categorías y un carrito de compra
 ✔ Validaciones con Jakarta Validation.
 ✔ Manejo global de excepciones mediante `@RestControllerAdvice`.
 ✔ DTO para optimizar las respuestas del carrito.
-✔ Comunicación Frontend ↔ Backend mediante Fetch API.
-✔ Toasts personalizados.
-✔ Modal de confirmación.
-✔ Badge dinámico del carrito.
+✔ Cors
 ✔ Código organizado siguiendo arquitectura en capas.
 
 ---
@@ -58,13 +55,6 @@ La aplicación permite administrar productos, categorías y un carrito de compra
 * Jakarta Validation
 * Maven
 
-## Frontend
-
-* HTML5
-* CSS3
-* JavaScript ES6
-* Fetch API
-* Font Awesome
 
 ## Herramientas
 
@@ -204,33 +194,6 @@ src
             └── ProductosEcologicosApplication.java
 ```
 
----
-
-## Frontend
-
-```text
-frontend
-│
-├── css
-│
-├── img
-│
-├── pages
-│
-│   ├── tienda.html
-│   ├── carrito.html
-│   └── contacto.html
-│
-├── script
-│
-│   ├── api.js
-│   ├── tienda.js
-│   ├── carrito.js
-│   ├── script.js
-│   └── toast.js
-│
-└── index.html
-```
 
 ---
 
@@ -245,7 +208,6 @@ Antes de ejecutar el proyecto es necesario tener instalado:
 * MySQL Workbench.
 * Git.
 * Visual Studio Code (opcional para el frontend).
-* Live Server (opcional).
 
 ---
 
@@ -337,17 +299,18 @@ Respuesta:
 ```json
 [
   {
+  "categoria": {
+    "descripcion": "Bolsas de tela y textiles para reemplazar el plástico descartable",
     "id": 1,
-    "nombre": "Mochila plegable",
-    "precio": 109.95,
-    "descripcion": "Mochila plegable para notebook",
-    "stock": 20,
-    "imagenUrl": "...",
-    "categoria": {
-      "id": 1,
-      "nombre": "Ropa masculina"
-    }
-  }
+    "nombre": "Bolsas y textiles reutilizables"
+  },
+  "descripcion": "Bolsa reutilizable de tela modelo clásico",
+  "id": 1,
+  "imagenUrl": "https://i.postimg.cc/crY80KCz/bolsa-Reutilizable.jpg",
+  "nombre": "Bolsa reutilizable de tela modelo clásico",
+  "precio": 9.99,
+  "stock": 40
+}
 ]
 ```
 
@@ -586,41 +549,9 @@ Durante el desarrollo, la API fue probada utilizando herramientas como:
 
 Todas las respuestas del backend son consumidas por el frontend mediante **JavaScript (Fetch API)**, manteniendo una separación clara entre la lógica de presentación y la lógica de negocio.
 
-# 📸 Capturas de Pantalla
 
-A continuación se muestran algunas imágenes de la aplicación.
 
-## 🏠 Página Principal
 
-> *(Agregar captura de la página principal)*
-
-![Home](docs/images/home.png)
-
----
-
-## 🛍️ Tienda
-
-> *(Agregar captura del listado de productos)*
-
-![Tienda](docs/images/tienda.png)
-
----
-
-## 🛒 Carrito de Compras
-
-> *(Agregar captura del carrito con productos)*
-
-![Carrito](docs/images/carrito.png)
-
----
-
-## 📦 Detalle de Producto
-
-> *(Agregar captura del modal de descripción)*
-
-![Detalle](docs/images/modal-producto.png)
-
----
 
 # ✅ Funcionalidades Implementadas
 
@@ -642,22 +573,6 @@ A continuación se muestran algunas imágenes de la aplicación.
 
 ---
 
-### Frontend
-
-* ✔ HTML5.
-* ✔ CSS3.
-* ✔ JavaScript ES6.
-* ✔ Fetch API.
-* ✔ Comunicación desacoplada mediante `api.js`.
-* ✔ Renderizado dinámico de productos.
-* ✔ Modal para visualizar detalles.
-* ✔ Toast personalizados.
-* ✔ Modal de confirmación.
-* ✔ Badge dinámico del carrito.
-* ✔ Actualización automática del resumen del carrito.
-* ✔ Código organizado mediante clases JavaScript.
-
----
 
 # 📈 Mejoras Implementadas Durante el Desarrollo
 
@@ -668,10 +583,6 @@ A medida que evolucionó el proyecto se incorporaron diversas mejoras para optim
 * Centralización de todas las llamadas HTTP en `api.js`.
 * Incorporación de DTO para reducir el tamaño de las respuestas del backend.
 * Optimización de la actualización del carrito evitando consultas innecesarias.
-* Sustitución de `alert()` por Toast personalizados.
-* Reemplazo de `confirm()` por un modal de confirmación personalizado.
-* Actualización automática del badge del carrito.
-* Código documentado mediante comentarios Javadoc y JavaDoc Style.
 
 ---
 
@@ -690,14 +601,9 @@ Entre las mejoras planificadas se encuentran:
 * 🔍 Búsqueda avanzada de productos.
 * 🏷️ Filtros por categoría y precio.
 * 📄 Paginación de productos.
-* ⭐ Valoraciones y comentarios.
-* 📱 Diseño completamente responsive.
-* 🔔 Notificaciones en tiempo real mediante WebSocket.
-* 🛒 Animación "Fly To Cart".
-* ✨ Animación del badge del carrito.
 * 🔄 Sincronización automática del carrito entre múltiples pestañas.
 * 👨‍💼 Panel de administración para gestión de productos y categorías.
-* ☁️ Despliegue del backend y frontend en la nube.
+* ☁️ Despliegue del backend en la nube.
 
 ---
 
@@ -725,6 +631,337 @@ Durante el desarrollo del proyecto se aplicaron conocimientos de:
 
 ---
 
+# 🌐 Comunicación entre el Frontend y el Backend
+
+La aplicación implementa una arquitectura cliente-servidor donde el frontend consume una API REST desarrollada con **Spring Boot** mediante **Fetch API**.
+
+El backend es responsable de toda la lógica de negocio, mientras que el frontend se encarga únicamente de la interfaz de usuario y de mostrar la información al usuario.
+
+```text
+               Frontend
+      HTML + CSS + JavaScript
+               │
+               │ Fetch API
+               ▼
+       Spring Boot REST API
+               │
+               ▼
+      Services (Lógica de negocio)
+               │
+               ▼
+      Spring Data JPA / Hibernate
+               │
+               ▼
+             MySQL
+```
+
+---
+
+# 📦 Gestión de Productos
+
+## Obtener todos los productos
+
+**Endpoint**
+
+```http
+GET /productos
+```
+
+### Uso en el Frontend
+
+Este endpoint se ejecuta automáticamente al ingresar a la tienda para obtener el catálogo completo de productos.
+
+Archivo donde se utiliza:
+
+```text
+script/tienda.js
+```
+
+Funcionalidad:
+
+* Cargar productos desde la base de datos.
+* Generar dinámicamente las tarjetas de la tienda.
+* Mostrar nombre, precio, imagen y categoría.
+
+---
+
+# 🛒 Gestión del Carrito
+
+El carrito de compras representa una de las funcionalidades principales del sistema.
+
+Cada acción realizada por el usuario se traduce en una llamada a la API REST.
+
+---
+
+## Crear un carrito
+
+**Endpoint**
+
+```http
+POST /carritos
+```
+
+### Uso en el Frontend
+
+Cuando el usuario ingresa por primera vez a la aplicación, el sistema verifica si existe un carrito asociado en el navegador.
+
+Si no existe, se crea automáticamente uno nuevo y su identificador se almacena en el `localStorage`.
+
+Archivo:
+
+```text
+script/api.js
+```
+
+---
+
+## Mostrar el carrito
+
+**Endpoint**
+
+```http
+GET /carritos/{id}
+```
+
+### Uso en el Frontend
+
+Este endpoint obtiene el contenido completo del carrito.
+
+Archivo:
+
+```text
+script/carrito.js
+```
+
+Permite mostrar:
+
+* Productos agregados.
+* Cantidad de unidades.
+* Precio unitario.
+* Subtotal por producto.
+* Total general.
+
+---
+
+## Agregar un producto
+
+**Endpoint**
+
+```http
+POST /carritos/{carritoId}/productos/{productoId}
+```
+
+### Botón asociado
+
+```text
+🛒 Agregar
+```
+
+Cuando el usuario presiona el botón **Agregar**, el frontend envía una solicitud al backend para incorporar una unidad del producto seleccionado al carrito.
+
+El backend:
+
+* Busca el carrito.
+* Busca el producto.
+* Verifica disponibilidad de stock.
+* Actualiza la cantidad.
+* Guarda los cambios en la base de datos.
+
+Luego el frontend actualiza automáticamente:
+
+* El badge del carrito.
+* El total.
+* El resumen.
+* La notificación (Toast).
+
+---
+
+## Incrementar la cantidad
+
+**Endpoint**
+
+```http
+POST /carritos/{carritoId}/productos/{productoId}
+```
+
+### Botón asociado
+
+```text
+➕
+```
+
+El mismo endpoint utilizado para agregar productos también permite aumentar la cantidad de unidades de un producto ya existente en el carrito.
+
+Cada clic incrementa la cantidad en una unidad.
+
+---
+
+## Disminuir la cantidad
+
+**Endpoint**
+
+```http
+PUT /carritos/{carritoId}/productos/{productoId}/descontar
+```
+
+### Botón asociado
+
+```text
+➖
+```
+
+Cada clic reduce una unidad del producto seleccionado.
+
+Cuando la cantidad llega a cero, el producto es eliminado automáticamente del carrito.
+
+Además, el backend actualiza el stock disponible.
+
+---
+
+## Eliminar un producto
+
+**Endpoint**
+
+```http
+DELETE /carritos/{carritoId}/productos/{productoId}
+```
+
+### Botón asociado
+
+```text
+❌
+```
+
+Elimina completamente el producto del carrito, independientemente de la cantidad de unidades.
+
+Antes de ejecutar esta acción se muestra un cuadro de confirmación personalizado para evitar eliminaciones accidentales.
+
+---
+
+## Vaciar el carrito
+
+**Endpoint**
+
+```http
+DELETE /carritos/{id}/vaciar
+```
+
+### Botón asociado
+
+```text
+Vaciar carrito
+```
+
+Elimina todos los productos del carrito manteniendo el carrito activo para futuras compras.
+
+Una vez completada la operación, la interfaz:
+
+* Vacía la tabla de productos.
+* Actualiza el total.
+* Reinicia el badge del carrito.
+* Muestra una notificación al usuario.
+
+---
+
+## Obtener el resumen del carrito
+
+**Endpoint**
+
+```http
+GET /carritos/{id}/resumen
+```
+
+### Uso en el Frontend
+
+Este endpoint devuelve un objeto DTO con la información mínima necesaria para actualizar la interfaz.
+
+Respuesta:
+
+```json
+{
+    "cantidadProductos": 5,
+    "total": 18450.75
+}
+```
+
+Este resumen permite actualizar:
+
+* El badge del carrito.
+* El importe total.
+* La cantidad total de productos.
+
+Sin necesidad de descargar nuevamente toda la información del carrito.
+
+---
+
+# 🔄 Flujo de una compra
+
+```text
+Usuario
+    │
+    ▼
+Selecciona un producto
+    │
+    ▼
+Presiona "Agregar"
+    │
+    ▼
+JavaScript (Fetch API)
+    │
+    ▼
+POST /carritos/{carritoId}/productos/{productoId}
+    │
+    ▼
+Spring Boot
+    │
+    ▼
+Service
+    │
+    ▼
+Repository
+    │
+    ▼
+MySQL
+    │
+    ▼
+Actualización del carrito
+    │
+    ▼
+Respuesta al Frontend
+    │
+    ▼
+Actualización del total, badge y notificación
+```
+
+---
+
+# 📊 Relación entre la interfaz y la API
+
+| Acción del usuario   | Componente               | Endpoint                                                     |
+| -------------------- | ------------------------ | ------------------------------------------------------------ |
+| Ingresar a la tienda | Listado de productos     | `GET /productos`                                             |
+| Crear carrito        | Automático               | `POST /carritos`                                             |
+| Ver carrito          | Página del carrito       | `GET /carritos/{id}`                                         |
+| Agregar producto     | Botón **Agregar**        | `POST /carritos/{carritoId}/productos/{productoId}`          |
+| Incrementar cantidad | Botón **➕**              | `POST /carritos/{carritoId}/productos/{productoId}`          |
+| Disminuir cantidad   | Botón **➖**              | `PUT /carritos/{carritoId}/productos/{productoId}/descontar` |
+| Eliminar producto    | Botón **❌**              | `DELETE /carritos/{carritoId}/productos/{productoId}`        |
+| Vaciar carrito       | Botón **Vaciar carrito** | `DELETE /carritos/{id}/vaciar`                               |
+| Actualizar resumen   | Automático               | `GET /carritos/{id}/resumen`                                 |
+
+---
+
+# ✨ Beneficios de la implementación
+
+* Arquitectura desacoplada entre frontend y backend.
+* API REST reutilizable por diferentes clientes (web, móvil o escritorio).
+* Comunicación mediante JSON utilizando Fetch API.
+* Optimización de las respuestas mediante DTO para reducir el tráfico de datos.
+* Separación clara entre presentación, lógica de negocio y acceso a datos.
+* Código modular y fácil de mantener, permitiendo incorporar nuevas funcionalidades como autenticación, pedidos o integración con pasarelas de pago.
+
+
+
 # 👨‍💻 Autor
 
 **Alan Contreras Flores**
@@ -734,27 +971,26 @@ Proyecto desarrollado como trabajo final para el curso **Java Full Stack – Tal
 GitHub:
 
 ```text
-https://github.com/TU-USUARIO
+https://github.com/AlanContreras784
 ```
 
 LinkedIn:
 
 ```text
-https://www.linkedin.com/in/TU-PERFIL
+https://www.linkedin.com/in/alanbenitocontrerasflores250784/
 ```
 
 ---
 
 # 🙏 Agradecimientos
 
-Agradezco a **Talento Tech**, a los docentes y compañeros del curso por los conocimientos compartidos durante la formación, que hicieron posible el desarrollo de este proyecto.
+Agradezco a **Talento Tech**, al profesor Miguel Angel Nefle y compañeros del curso por los conocimientos compartidos durante la formación, que hicieron posible el desarrollo de este proyecto.
 
 ---
 
 # 📄 Licencia
 
 Este proyecto fue desarrollado con fines educativos como parte de la formación en **Java Full Stack**.
-
 Puede utilizarse como material de estudio y referencia, respetando la autoría correspondiente.
 
 ---

@@ -950,6 +950,31 @@ Actualización del total, badge y notificación
 | Actualizar resumen   | Automático               | `GET /carritos/{id}/resumen`                                 |
 
 ---
+## 🛠️ Documentación de la API (Swagger UI)
+
+Este proyecto cuenta con documentación interactiva generada automáticamente mediante **Swagger / OpenAPI 3** (`Springdoc`). A través de esta interfaz visual, puedes explorar, comprender y probar todos los endpoints disponibles (servicios de productos ecológicos) en tiempo real directamente desde tu navegador, sin necesidad de herramientas externas como Postman.
+
+### 🚀 Cómo acceder a la documentación
+
+1. Asegúrate de tener la aplicación ejecutándose localmente (`localhost`).
+2. Abre tu navegador web favorito.
+3. Ingresa a la siguiente dirección:
+   [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+
+### 🧪 ¿Cómo probar los endpoints?
+
+1. En la lista de Swagger, haz clic sobre el endpoint que deseas probar (por ejemplo, `GET /api/productos`).
+2. Presiona el botón **"Try it out"** (Probar) ubicado en la esquina derecha del panel del método.
+3. Si el endpoint requiere parámetros (como un ID), completa los campos correspondientes.
+4. Haz clic en el botón azul **"Execute"** (Ejecutar).
+5. En la sección inferior verás de inmediato la respuesta del servidor con el código de estado HTTP (ej. 200, 201) y los datos en formato JSON.
+
+### 📝 Estructura del Contrato
+El archivo de especificación técnica de la API en formato JSON (contrato OpenAPI) se encuentra disponible en la siguiente ruta mientras el servidor está activo:
+* [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
+
+
+----
 
 # ✨ Beneficios de la implementación
 

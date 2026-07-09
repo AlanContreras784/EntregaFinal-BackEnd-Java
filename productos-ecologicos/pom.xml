@@ -67,6 +67,13 @@
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 
+	<!-- Springdoc OpenAPI: genera documentación Swagger automáticamente a partir de los
+	 controladores REST. -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.6.0</version>
+		</dependency>
 
 
 	</dependencies>

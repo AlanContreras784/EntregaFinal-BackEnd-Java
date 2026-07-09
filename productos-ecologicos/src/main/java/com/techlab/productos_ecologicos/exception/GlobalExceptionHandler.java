@@ -9,8 +9,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
 import java.util.Map;
+import io.swagger.v3.oas.annotations.Hidden;
+
 
 @RestControllerAdvice
+@Hidden // <-- Esto le dice a Swagger: "ignora esta clase"
 public class GlobalExceptionHandler {
 
     // Versión simplificada (solo devuelve el primer error):

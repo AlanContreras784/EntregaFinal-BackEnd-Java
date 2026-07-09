@@ -966,7 +966,7 @@ Actualización del total, badge y notificación
 
 **Alan Contreras Flores**
 
-Proyecto desarrollado como trabajo final para el curso **Java Full Stack – Talento Tech**.
+Proyecto desarrollado como trabajo final para el curso **BackEnd-Java – Talento Tech**.
 
 GitHub:
 

@@ -3,15 +3,21 @@ package com.techlab.productos_ecologicos.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.techlab.productos_ecologicos.dto.CarritoResponseDTO;
+import com.techlab.productos_ecologicos.mapper.CarritoMapper;
 import com.techlab.productos_ecologicos.dto.CarritoResumenDTO;
 import com.techlab.productos_ecologicos.exception.CarritoNoEncontradoException;
 import com.techlab.productos_ecologicos.exception.ProductoNoEncontradoEnElCarritoException;
 import com.techlab.productos_ecologicos.exception.StockInsuficienteException;
 import com.techlab.productos_ecologicos.models.Carrito;
 import com.techlab.productos_ecologicos.models.CarritoProducto;
+import com.techlab.productos_ecologicos.models.EstadoCarrito;
 import com.techlab.productos_ecologicos.models.Producto;
+import com.techlab.productos_ecologicos.models.Usuario;
 import com.techlab.productos_ecologicos.repository.CarritoProductoRepository;
 import com.techlab.productos_ecologicos.repository.CarritoRepository;
 
@@ -28,8 +34,19 @@ public class CarritoService {
         this.carritoProductoRepository = carritoProductoRepository;                 
     }
 
+
     public Carrito crear() {
-        return carritoRepository.save(new Carrito());
+
+        Usuario usuario = (Usuario)
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+                        .getPrincipal();
+        Carrito carrito = new Carrito();
+        carrito.setUsuario(usuario);
+        carrito.setEstado(EstadoCarrito.ACTIVO);
+
+        return carritoRepository.save(carrito);
     }
 
     // obtenerPorId centraliza la validación de existencia.
@@ -71,8 +88,15 @@ public class CarritoService {
         // Descuenta una unidad de stock y persiste el cambio
         producto.setStock(producto.getStock() - 1);
         productoService.guardar(producto);
-
         return carritoRepository.save(carrito);
+    }
+
+
+    public Carrito agregarProducto(Integer productoId) {
+        // Obtener el carrito del usuario autenticado
+        Carrito carrito = obtenerCarritoDelUsuario();
+        // Reutilizar toda la lógica que ya tienes
+        return agregarProducto(carrito.getId(), productoId);
     }
 
 
@@ -99,6 +123,13 @@ public class CarritoService {
         return carritoRepository.save(carrito);
     }
 
+
+    public Carrito descontarProducto(Integer productoId) {
+        Carrito carrito = obtenerCarritoDelUsuario();
+        return descontarProducto(carrito.getId(), productoId);
+    }
+
+
     // clear() quita los productos de la lista en memoria.
     // save() persiste ese cambio eliminando las filas de la tabla intermedia.
     // public Carrito vaciar(Integer id) {
@@ -122,6 +153,11 @@ public class CarritoService {
         return carritoRepository.save(carrito);
     }
 
+    public Carrito eliminarProducto(Integer productoId) {
+        Carrito carrito = obtenerCarritoDelUsuario();
+        return eliminarProducto(carrito.getId(), productoId);
+    }
+
     // Vacía el carrito y devuelve el stock de todos los productos
     public Carrito vaciar(Integer carritoId) {
         Carrito carrito = obtenerPorId(carritoId);
@@ -137,7 +173,10 @@ public class CarritoService {
         return carritoRepository.save(carrito);
     }
 
-
+    public Carrito vaciar() {
+        Carrito carrito = obtenerCarritoDelUsuario();
+        return vaciar(carrito.getId());
+    }
     // Elimina el carrito y devuelve el stock de todos los productos
     public void eliminar(Integer id) {
         Carrito carrito = obtenerPorId(id);
@@ -163,4 +202,56 @@ public class CarritoService {
                 total
         );
     }
+
+    public CarritoResumenDTO obtenerResumen() {
+        Carrito carrito = obtenerCarritoDelUsuario();
+        return obtenerResumen(carrito.getId());
+    }
+
+    public Carrito obtenerCarritoDelUsuario() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Usuario usuario =
+                (Usuario) auth.getPrincipal();
+        return carritoRepository
+                .findByUsuarioAndEstado(usuario, EstadoCarrito.ACTIVO)
+                .orElseGet(() -> {
+                    Carrito carrito = new Carrito();
+                    carrito.setUsuario(usuario);
+                    carrito.setEstado(EstadoCarrito.ACTIVO);
+                    return carritoRepository.save(carrito);
+                });
+    }
+
+    public CarritoResponseDTO obtenerMiCarritoDTO() {
+        Carrito carrito = obtenerCarritoDelUsuario();
+        return CarritoMapper.toDTO(carrito);
+    }
+    //Obtener un carrito por id como DTO
+    public CarritoResponseDTO obtenerCarritoDTO(Integer id) {
+    Carrito carrito = obtenerPorId(id);
+    return CarritoMapper.toDTO(carrito);
+    }
+    //Agregar producto y devolver DTO
+    public CarritoResponseDTO agregarProductoDTO(Integer productoId) {
+    Carrito carrito = agregarProducto(productoId);
+    return CarritoMapper.toDTO(carrito);
+    }
+    //Descontar producto y devolver DTO
+    public CarritoResponseDTO descontarProductoDTO(Integer productoId) {
+        Carrito carrito = descontarProducto(productoId);
+        return CarritoMapper.toDTO(carrito);
+    }
+    //Eliminar producto y devolver DTO
+    public CarritoResponseDTO eliminarProductoDTO(Integer productoId) {
+    Carrito carrito = eliminarProducto(productoId);
+    return CarritoMapper.toDTO(carrito);
+    }
+    //Vaciar carrito y devolver DTO
+    public CarritoResponseDTO vaciarDTO() {
+    Carrito carrito = vaciar();
+    return CarritoMapper.toDTO(carrito);
+    }
+
+
+
 }

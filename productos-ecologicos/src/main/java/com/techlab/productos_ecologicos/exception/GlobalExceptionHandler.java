@@ -2,6 +2,8 @@ package com.techlab.productos_ecologicos.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -83,6 +85,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 "El carrito contiene una referencia a un producto que ya no existe. " +
                 "Vacíe el carrito o elimínelo y cree uno nuevo.");
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<String> manejarCredencialesIncorrectas(
+            BadCredentialsException ex) {        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body("Usuario o contraseña incorrectos.");
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<String> manejarAccesoDenegado(
+            AuthorizationDeniedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body("No tienes permisos para acceder a este recurso.");
     }
 
     @ExceptionHandler(Exception.class)

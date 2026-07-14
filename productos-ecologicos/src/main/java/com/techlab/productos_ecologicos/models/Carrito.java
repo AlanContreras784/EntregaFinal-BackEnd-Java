@@ -18,6 +18,8 @@ public class Carrito {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Enumerated(EnumType.STRING)
+    private EstadoCarrito estado;
     
     // OneToMany: un carrito tiene muchos CarritoProducto.
     // mappedBy indica que la relación está definida en CarritoProducto (campo "carrito").
@@ -25,4 +27,9 @@ public class Carrito {
     // orphanRemoval: si se quita un CarritoProducto de la lista, se elimina de la base.
     @OneToMany(mappedBy = "carrito", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CarritoProducto> productos = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
+
 }

@@ -75,6 +75,34 @@
 			<version>2.6.0</version>
 		</dependency>
 
+	<!-- Spring Security: intercepta requests y gestiona autenticación y autorización -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<!-- jjwt-api: las interfaces y clases que usamos directamente en el código -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>0.12.6</version>
+		</dependency>
+
+		<!-- jjwt-impl: implementación interna — solo se necesita en tiempo de ejecución -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.12.6</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- jjwt-jackson: soporte JSON para el token — solo en tiempo de ejecución -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>0.12.6</version>
+			<scope>runtime</scope>
+		</dependency>
 
 	</dependencies>
 

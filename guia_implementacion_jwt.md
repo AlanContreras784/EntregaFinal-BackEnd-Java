@@ -813,7 +813,7 @@ Resultado esperado: `403 Forbidden`
 
 ### Endpoint protegido con token válido
 
-En Thunder Client ir a **Headers** y agregar:
+En Thunder Client ir a **Auth** y agregar:
 
 ```
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9...

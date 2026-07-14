@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.techlab.productos_ecologicos.dto.CarritoResponseDTO;
 import com.techlab.productos_ecologicos.dto.CarritoResumenDTO;
 import com.techlab.productos_ecologicos.models.Carrito;
 import com.techlab.productos_ecologicos.services.CarritoService;
@@ -20,59 +21,72 @@ public class CarritoController {
         this.service = service;
     }
 
+    // Lista todos los carritos del sistema.
+    // Este endpoint es útil para administración o pruebas.
+    // Por ahora devuelve entidades. Más adelante también podría devolver DTOs.
     @GetMapping
     public ResponseEntity<List<Carrito>> listarTodos() {
         return ResponseEntity.ok(service.listarTodos());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Carrito> obtenerCarrito(@PathVariable("id") Integer id) {
-        return ResponseEntity.ok(service.obtenerPorId(id));
+    // Devuelve el carrito activo del usuario autenticado.
+    // Utiliza un DTO para no exponer la entidad completa ni datos sensibles.
+    @GetMapping("/mi-carrito")
+    public ResponseEntity<CarritoResponseDTO> obtenerMiCarrito() {
+        return ResponseEntity.ok(service.obtenerMiCarritoDTO());
     }
 
-    // Devuelve el precio total de todos los productos en el carrito
-    @GetMapping("/{id}/resumen")
-    public ResponseEntity<CarritoResumenDTO> resumen(@PathVariable("id") Integer id) {
-        return ResponseEntity.ok(service.obtenerResumen(id));
+    // Devuelve un resumen del carrito:
+    // cantidad de productos, subtotal, envío y total.
+    @GetMapping("/mi-carrito/resumen")
+    public ResponseEntity<CarritoResumenDTO> obtenerMiResumen() {
+        return ResponseEntity.ok(service.obtenerResumen());
     }
 
-    // Crea un carrito vacío — debe existir antes de agregar productos
+    // Crea un carrito vacío asociado al usuario autenticado.
     @PostMapping
     public ResponseEntity<Carrito> crear() {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.crear());
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.crear());
     }
 
-    // Dos @PathVariable porque necesita identificar el carrito y el producto.
-    // No usa @RequestBody — toda la información está en la URL.
-    @PostMapping("/{carritoId}/productos/{productoId}")
-    public ResponseEntity<Carrito> agregarProducto(
-            @PathVariable("carritoId") Integer carritoId,
+    // Agrega una unidad del producto indicado al carrito del usuario.
+    // Devuelve el carrito actualizado mediante un DTO.
+    @PostMapping("/productos/{productoId}")
+    public ResponseEntity<CarritoResponseDTO> agregarProducto(
             @PathVariable("productoId") Integer productoId) {
-        return ResponseEntity.ok(service.agregarProducto(carritoId, productoId));
+
+        return ResponseEntity.ok(service.agregarProductoDTO(productoId));
     }
 
-    // Descuenta un producto del carrito y devuelve la cantidad al stock
-    @PutMapping("/{carritoId}/productos/{productoId}/descontar")
-    public ResponseEntity<Carrito> descontarProducto(
-            @PathVariable("carritoId") Integer carritoId,
+    // Descuenta una unidad del producto del carrito.
+    // Si la cantidad llega a cero, elimina el producto del carrito.
+    @PutMapping("/productos/{productoId}/descontar")
+    public ResponseEntity<CarritoResponseDTO> descontarProducto(
             @PathVariable("productoId") Integer productoId) {
-        return ResponseEntity.ok(service.descontarProducto(carritoId, productoId));
+
+        return ResponseEntity.ok(service.descontarProductoDTO(productoId));
     }
 
-    // Elimina un producto del carrito y devuelve la cantidad al stock
-    @DeleteMapping("/{carritoId}/productos/{productoId}")
-    public ResponseEntity<Carrito> eliminarProducto(
-            @PathVariable("carritoId") Integer carritoId,
+    // Elimina completamente un producto del carrito,
+    // devolviendo todas sus unidades al stock.
+    @DeleteMapping("/productos/{productoId}")
+    public ResponseEntity<CarritoResponseDTO> eliminarProducto(
             @PathVariable("productoId") Integer productoId) {
-        return ResponseEntity.ok(service.eliminarProducto(carritoId, productoId));
-    }
-    
-    // Vacía el carrito sin eliminarlo — el usuario puede seguir usándolo
-    @DeleteMapping("/{id}/vaciar")
-    public ResponseEntity<Carrito> vaciar(@PathVariable("id") Integer id) {
-        return ResponseEntity.ok(service.vaciar(id));
+
+        return ResponseEntity.ok(service.eliminarProductoDTO(productoId));
     }
 
+    // Vacía el carrito del usuario y devuelve todas las unidades al stock.
+    // El carrito sigue existiendo, simplemente queda sin productos.
+    @DeleteMapping("/mi-carrito/vaciar")
+    public ResponseEntity<CarritoResponseDTO> vaciar() {
+        return ResponseEntity.ok(service.vaciarDTO());
+    }
+
+    // Elimina completamente un carrito por su id.
+    // Este endpoint es más útil para administración que para un usuario final.
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable("id") Integer id) {
         service.eliminar(id);

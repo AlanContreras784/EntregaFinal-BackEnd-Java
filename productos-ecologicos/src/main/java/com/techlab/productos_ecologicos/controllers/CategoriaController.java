@@ -10,10 +10,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.techlab.productos_ecologicos.models.Categoria;
+import com.techlab.productos_ecologicos.dto.CategoriaDTO;
+import com.techlab.productos_ecologicos.dto.CategoriaRequestDTO;
+//import com.techlab.productos_ecologicos.models.Categoria;
 import com.techlab.productos_ecologicos.services.CategoriaService;
+
 
 import jakarta.validation.Valid;
 
@@ -27,29 +31,42 @@ public class CategoriaController {
     public CategoriaController(CategoriaService service) {
         this.service = service;
     }
-
+    // Obtiene todas las categorías y devuelve una lista de DTOs.
     @GetMapping
-    public ResponseEntity<List<Categoria>> listarTodos() {
-        return ResponseEntity.ok(service.listarTodos());
+    public ResponseEntity<List<CategoriaDTO>> listarTodos() {
+        return ResponseEntity.ok(
+                service.obtenerCategoriasResponse()
+        );
     }
-
+    // Obtiene una categoría por id y devuelve un DTO.
     @GetMapping("/{id}")
-    public ResponseEntity<Categoria> obtenerCategoria(@PathVariable("id") Integer id) {
-        return ResponseEntity.ok(service.obtenerPorId(id)); 
+    public ResponseEntity<CategoriaDTO> obtenerCategoria(
+            @PathVariable("id") Integer id) {
+        return ResponseEntity.ok(
+                service.obtenerCategoriaResponse(id)
+        );
     }
-
-    @PostMapping("")
-    public ResponseEntity<Categoria> crearCategoria( @Valid @RequestBody Categoria categoria) {
-        return ResponseEntity.ok(service.guardar(categoria));
+    // Crea una nueva categoría utilizando CategoriaRequestDTO.
+    @PostMapping
+    public ResponseEntity<CategoriaDTO> crearCategoria(
+            @Valid @RequestBody CategoriaRequestDTO dto) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.crearCategoria(dto));
     }
-
+    // Actualiza una categoría existente utilizando CategoriaRequestDTO.
     @PutMapping("/{id}")
-    public ResponseEntity<Categoria> actualizarCategoria(@PathVariable("id") Integer id, @Valid @RequestBody Categoria categoria) {
-        return ResponseEntity.ok(service.actualizar(id, categoria));
+    public ResponseEntity<CategoriaDTO> actualizarCategoria(
+            @PathVariable("id") Integer id,
+            @Valid @RequestBody CategoriaRequestDTO dto) {
+        return ResponseEntity.ok(
+                service.actualizarCategoria(id, dto)
+        );
     }
-
+    // Elimina una categoría por id.
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarCategoria(@PathVariable("id") Integer id) {
+    public ResponseEntity<Void> eliminarCategoria(
+            @PathVariable("id") Integer id) {
         service.eliminar(id);
         return ResponseEntity.noContent().build();
     }

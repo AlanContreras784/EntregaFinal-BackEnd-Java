@@ -258,5 +258,12 @@ public class CarritoService {
                 .map(CarritoMapper::toDTO)
                 .toList();
     }
+    // Obtiene todos los carritos y los convierte a DTO para enviarlos al frontend.
+    public List<CarritoResponseDTO> listarTodosDTO() {
+        return listarTodos()
+                .stream()
+                .map(CarritoMapper::toDTO)
+                .toList();
+    }
 
 }

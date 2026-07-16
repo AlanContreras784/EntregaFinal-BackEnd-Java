@@ -2,6 +2,7 @@ package com.techlab.productos_ecologicos.controllers;
 
 import java.util.List;
 
+import com.techlab.productos_ecologicos.dto.ApiResponse;
 import com.techlab.productos_ecologicos.dto.ProductoRequestDTO;
 import com.techlab.productos_ecologicos.dto.ProductoResponseDTO;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,67 +29,116 @@ public class ProductoController {
     public ProductoController(ProductoService service) {
         this.service = service;
     }
-
-    // Obtiene todos los productos y devuelve solamente los datos necesarios para el frontend.
+    // Obtiene todos los productos y devuelve una respuesta estándar para el frontend.
     @GetMapping
-    public ResponseEntity<List<ProductoResponseDTO>> listarProductos() {
-        return ResponseEntity.ok(service.obtenerProductosResponse());
-    }
-
-    // Obtiene un producto por id y devuelve un DTO evitando exponer la entidad JPA.
-    @GetMapping("/{id}")
-    public ResponseEntity<ProductoResponseDTO> obtenerProducto(
-            @PathVariable("id")  Integer id) {
-        return ResponseEntity.ok(service.obtenerProductoResponse(id));
-    }
-
-    // Busca productos por nombre y devuelve una lista de DTOs preparados para el frontend.
-    @GetMapping("/nombre/{nombre}")
-    public ResponseEntity<List<ProductoResponseDTO>> buscarPorNombre(
-            @PathVariable("nombre") String nombre) {
-
+    public ResponseEntity<ApiResponse<List<ProductoResponseDTO>>> listarProductos() {
+        List<ProductoResponseDTO> productos =
+                service.obtenerProductosResponse();
         return ResponseEntity.ok(
-                service.buscarPorNombreResponse(nombre)
+                new ApiResponse<>(
+                        true,
+                        "Productos obtenidos correctamente.",
+                        productos
+                )
         );
     }
 
-   // Busca productos por categoría y devuelve una lista de DTOs preparados para el frontend.
-    @GetMapping("/categoria/{categoria}")
-    public ResponseEntity<List<ProductoResponseDTO>> buscarPorCategoria(
-            @PathVariable("categoria") String categoria) {
-
+    // Obtiene un producto por id y devuelve una respuesta estándar para el frontend.
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<ProductoResponseDTO>> obtenerProducto(
+            @PathVariable("id") Integer id) {
+        ProductoResponseDTO producto =
+                service.obtenerProductoResponse(id);
         return ResponseEntity.ok(
-                service.buscarPorCategoriaResponse(categoria)
+                new ApiResponse<>(
+                        true,
+                        "Producto obtenido correctamente.",
+                        producto
+                )
+        );
+    }
+    // Busca productos por nombre y devuelve una respuesta estándar para el frontend.
+    @GetMapping("/nombre/{nombre}")
+    public ResponseEntity<ApiResponse<List<ProductoResponseDTO>>> buscarPorNombre(
+            @PathVariable("nombre") String nombre) {
+        List<ProductoResponseDTO> productos =
+                service.buscarPorNombreResponse(nombre);
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        true,
+                        "Productos encontrados.",
+                        productos
+                )
+        );
+    }
+
+    // Busca productos por categoría y devuelve una respuesta estándar para el frontend.
+    @GetMapping("/categoria/{categoria}")
+    public ResponseEntity<ApiResponse<List<ProductoResponseDTO>>> buscarPorCategoria(
+            @PathVariable("categoria") String categoria) {
+        List<ProductoResponseDTO> productos =
+                service.buscarPorCategoriaResponse(categoria);
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        true,
+                        "Productos encontrados.",
+                        productos
+                )
         );
     }
     // Crea un producto nuevo utilizando ProductoRequestDTO.
     // El Service se encarga de convertir el DTO en entidad,
     // buscar la categoría y guardar el producto.
+    // Crea un nuevo producto y devuelve una respuesta estándar para el frontend.
     @PostMapping
-    public ResponseEntity<ProductoResponseDTO> crearProducto(
+    public ResponseEntity<ApiResponse<ProductoResponseDTO>> crearProducto(
             @Valid @RequestBody ProductoRequestDTO dto) {
-
+        ProductoResponseDTO producto =
+                service.crearProducto(dto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(service.crearProducto(dto));
+                .body(
+                        new ApiResponse<>(
+                                true,
+                                "Producto creado correctamente.",
+                                producto
+                        )
+                );
     }
 
-        /// Actualiza un producto existente utilizando ProductoRequestDTO.
+    // Actualiza un producto existente utilizando ProductoRequestDTO.
     // Busca el producto existente, modifica sus datos
     // y devuelve la respuesta preparada para el frontend.
+    // Actualiza un producto existente y devuelve una respuesta estándar para el frontend.
     @PutMapping("/{id}")
-    public ResponseEntity<ProductoResponseDTO> actualizarProducto(
+    public ResponseEntity<ApiResponse<ProductoResponseDTO>> actualizarProducto(
             @PathVariable("id") Integer id,
             @Valid @RequestBody ProductoRequestDTO dto) {
 
+        ProductoResponseDTO producto =
+                service.actualizarProducto(id, dto);
+
         return ResponseEntity.ok(
-                service.actualizarProducto(id, dto)
+                new ApiResponse<>(
+                        true,
+                        "Producto actualizado correctamente.",
+                        producto
+                )
         );
     }
-    // Elimina un producto por id y devuelve una respuesta sin contenido.
-    @DeleteMapping ("/{id}") 
-    public ResponseEntity<Void> eliminarProducto(@PathVariable("id") Integer id) {
+    // Elimina un producto y devuelve una respuesta estándar para el frontend.
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> eliminarProducto(
+            @PathVariable("id") Integer id) {
+
         service.eliminar(id);
-        return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        true,
+                        "Producto eliminado correctamente.",
+                        null
+                )
+        );
     }
 }

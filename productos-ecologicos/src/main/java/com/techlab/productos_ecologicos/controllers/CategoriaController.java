@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import com.techlab.productos_ecologicos.dto.ApiResponse;
 import com.techlab.productos_ecologicos.dto.CategoriaDTO;
 import com.techlab.productos_ecologicos.dto.CategoriaRequestDTO;
 //import com.techlab.productos_ecologicos.models.Categoria;
@@ -31,43 +32,80 @@ public class CategoriaController {
     public CategoriaController(CategoriaService service) {
         this.service = service;
     }
-    // Obtiene todas las categorías y devuelve una lista de DTOs.
+    // Obtiene todas las categorías y devuelve una respuesta estándar para el frontend.
     @GetMapping
-    public ResponseEntity<List<CategoriaDTO>> listarTodos() {
+    public ResponseEntity<ApiResponse<List<CategoriaDTO>>> listarTodos() {
         return ResponseEntity.ok(
-                service.obtenerCategoriasResponse()
+                new ApiResponse<>(
+                        true,
+                        "Categorías obtenidas correctamente.",
+                        service.obtenerCategoriasResponse()
+                )
         );
     }
-    // Obtiene una categoría por id y devuelve un DTO.
+    // Obtiene una categoría por id y devuelve una respuesta estándar para el frontend.
     @GetMapping("/{id}")
-    public ResponseEntity<CategoriaDTO> obtenerCategoria(
+    public ResponseEntity<ApiResponse<CategoriaDTO>> obtenerCategoria(
             @PathVariable("id") Integer id) {
         return ResponseEntity.ok(
-                service.obtenerCategoriaResponse(id)
+                new ApiResponse<>(
+                        true,
+                        "Categoría obtenida correctamente.",
+                        service.obtenerCategoriaResponse(id)
+                )
         );
     }
-    // Crea una nueva categoría utilizando CategoriaRequestDTO.
+    // Crea una nueva categoría y devuelve una respuesta estándar para el frontend.
     @PostMapping
-    public ResponseEntity<CategoriaDTO> crearCategoria(
+    public ResponseEntity<ApiResponse<CategoriaDTO>> crearCategoria(
             @Valid @RequestBody CategoriaRequestDTO dto) {
+        CategoriaDTO categoriaCreada = service.crearCategoria(dto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(service.crearCategoria(dto));
+                .body(
+                    new ApiResponse<>(
+                            true,
+                            "Categoría creada correctamente.",
+                            categoriaCreada
+                    )
+                );
     }
-    // Actualiza una categoría existente utilizando CategoriaRequestDTO.
+    // Actualiza una categoría existente y devuelve una respuesta estándar para el frontend.
     @PutMapping("/{id}")
-    public ResponseEntity<CategoriaDTO> actualizarCategoria(
+    public ResponseEntity<ApiResponse<CategoriaDTO>> actualizarCategoria(
             @PathVariable("id") Integer id,
             @Valid @RequestBody CategoriaRequestDTO dto) {
+        CategoriaDTO categoriaActualizada =
+                service.actualizarCategoria(id, dto);
         return ResponseEntity.ok(
-                service.actualizarCategoria(id, dto)
+                new ApiResponse<>(
+                        true,
+                        "Categoría actualizada correctamente.",
+                        categoriaActualizada
+                )
         );
     }
     // Elimina una categoría por id.
+    // @DeleteMapping("/{id}")
+    // public ResponseEntity<Void> eliminarCategoria(
+    //         @PathVariable("id") Integer id) {
+    //     service.eliminar(id);
+    //     return ResponseEntity.noContent().build();
+    // }
+
+    // Elimina una categoría y devuelve una respuesta estándar para el frontend.
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarCategoria(
+    public ResponseEntity<ApiResponse<Void>> eliminarCategoria(
             @PathVariable("id") Integer id) {
+
         service.eliminar(id);
-        return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        true,
+                        "Categoría eliminada correctamente.",
+                        null
+                )
+        );
     }
 }

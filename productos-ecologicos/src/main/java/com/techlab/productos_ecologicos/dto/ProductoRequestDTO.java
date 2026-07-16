@@ -31,6 +31,7 @@ public class ProductoRequestDTO {
     private Integer stock;
 
     // URL de la imagen del producto
+    @NotBlank(message = "Por favor, selecciona una imagen para continuar")
     private String imagenUrl;
 
     // Solamente recibimos el ID de la categoría.

@@ -39,6 +39,7 @@ public class Producto {
     @Column(name = "stock", nullable = false)
     private Integer stock;
 
+    @NotBlank(message = "Por favor, selecciona una imagen para continuar")
     @Column(name = "imagen_url", length = 200)
     private String imagenUrl;
 

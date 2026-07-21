@@ -12,135 +12,213 @@ import com.techlab.productos_ecologicos.dto.CarritoResumenDTO;
 import com.techlab.productos_ecologicos.models.Carrito;
 import com.techlab.productos_ecologicos.services.CarritoService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/carritos")
+@Tag(
+    name = "Carritos",
+    description = "Operaciones relacionadas con el carrito de compras."
+)
 public class CarritoController {
-
         private final CarritoService service;
-
         public CarritoController(CarritoService service) {
                 this.service = service;
         }
-        // Lista todos los carritos del sistema.
-        // Este endpoint es principalmente para administración.
-        // Lista todos los carritos del sistema.
-        // Devuelve DTOs para no exponer las entidades JPA.
-        
-
         // Obtiene todos los carritos del sistema.
-        // Devuelve una lista de DTOs para no exponer las entidades JPA.
+        // Devuelve DTOs para no exponer las entidades JPA.
+        @Operation(
+                summary = "Listar carritos",
+                description = "Devuelve todos los carritos registrados en el sistema."
+        )
+        @ApiResponses({
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "200",
+                        description = "Carritos obtenidos correctamente"
+                )
+        })
         @GetMapping
         public ResponseEntity<ApiResponse<List<CarritoResponseDTO>>> listarTodos() {
-        return ResponseEntity.ok(
-                new ApiResponse<>(
-                        true,
-                        "Carritos obtenidos correctamente.",
-                        service.listarTodosDTO()
-                )
-        );
+                return ResponseEntity.ok(
+                        new ApiResponse<>(
+                                true,
+                                "Carritos obtenidos correctamente.",
+                                service.listarTodosDTO()
+                        )
+                );
         }
-                
         // Devuelve el carrito activo del usuario autenticado.
-        // Utiliza un DTO para no exponer la entidad completa ni datos sensibles.
+        @Operation(
+                summary = "Obtener mi carrito",
+                description = "Devuelve el carrito activo del usuario autenticado."
+        )
+        @ApiResponses({
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "200",
+                        description = "Carrito obtenido correctamente"
+                ),
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "401",
+                        description = "Usuario no autenticado"
+                )
+        })
         @GetMapping("/mi-carrito")
         public ResponseEntity<ApiResponse<CarritoResponseDTO>> obtenerMiCarrito() {
-                CarritoResponseDTO carrito = service.obtenerMiCarritoDTO();
                 return ResponseEntity.ok(
                         new ApiResponse<>(
                                 true,
                                 "Carrito obtenido correctamente.",
-                                carrito
+                                service.obtenerMiCarritoDTO()
                         )
                 );
         }
-
-        // Devuelve un resumen del carrito:
-        // cantidad de productos, subtotal, envío y total.
+        // Devuelve el resumen del carrito.
+        @Operation(
+                summary = "Resumen del carrito",
+                description = "Devuelve subtotal, envío, total y cantidad de productos."
+        )
+        @ApiResponses({
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "200",
+                        description = "Resumen obtenido correctamente"
+                )
+        })
         @GetMapping("/mi-carrito/resumen")
         public ResponseEntity<ApiResponse<CarritoResumenDTO>> obtenerMiResumen() {
-                CarritoResumenDTO resumen = service.obtenerResumen();
                 return ResponseEntity.ok(
                         new ApiResponse<>(
                                 true,
                                 "Resumen del carrito obtenido correctamente.",
-                                resumen
+                                service.obtenerResumen()
                         )
                 );
         }
-
-        // Crea un carrito vacío asociado al usuario autenticado.
+        // Crea un carrito vacío.
+        @Operation(
+                summary = "Crear carrito",
+                description = "Crea un carrito nuevo asociado al usuario autenticado."
+        )
+        @ApiResponses({
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "201",
+                        description = "Carrito creado correctamente"
+                )
+        })
         @PostMapping
         public ResponseEntity<ApiResponse<Carrito>> crear() {
-                Carrito carrito = service.crear();
-                return ResponseEntity
-                        .status(HttpStatus.CREATED)
+                return ResponseEntity.status(HttpStatus.CREATED)
                         .body(
                                 new ApiResponse<>(
                                         true,
                                         "Carrito creado correctamente.",
-                                        carrito
+                                        service.crear()
                                 )
                         );
         }
-        
-        // Agrega una unidad del producto indicado al carrito del usuario.
-        // Devuelve el carrito actualizado mediante un DTO.
+        // Agrega un producto al carrito.
+        @Operation(
+                summary = "Agregar producto",
+                description = "Agrega una unidad de un producto al carrito."
+        )
+        @ApiResponses({
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "200",
+                        description = "Producto agregado correctamente"
+                )
+        })
+        @PostMapping("/productos/{productoId}")
         public ResponseEntity<ApiResponse<CarritoResponseDTO>> agregarProducto(
                 @PathVariable("productoId") Integer productoId) {
-                CarritoResponseDTO carrito = service.agregarProductoDTO(productoId);
                 return ResponseEntity.ok(
                         new ApiResponse<>(
                                 true,
                                 "Producto agregado al carrito correctamente.",
-                                carrito
+                                service.agregarProductoDTO(productoId)
                         )
                 );
         }
-        // Descuenta una unidad del producto del carrito.
-        // Si la cantidad llega a cero, elimina el producto del carrito.
+        // Descuenta una unidad de un producto.
+        @Operation(
+                summary = "Descontar producto",
+                description = "Descuenta una unidad del producto del carrito."
+        )
+        @ApiResponses({
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "200",
+                        description = "Producto descontado correctamente"
+                )
+        })
         @PutMapping("/productos/{productoId}/descontar")
         public ResponseEntity<ApiResponse<CarritoResponseDTO>> descontarProducto(
                 @PathVariable("productoId") Integer productoId) {
-                CarritoResponseDTO carrito = service.descontarProductoDTO(productoId);
                 return ResponseEntity.ok(
                         new ApiResponse<>(
                                 true,
                                 "Producto descontado correctamente.",
-                                carrito
+                                service.descontarProductoDTO(productoId)
                         )
                 );
         }
-        // Elimina completamente un producto del carrito,
-        // devolviendo todas sus unidades al stock.
+        // Elimina completamente un producto del carrito.
+        @Operation(
+                summary = "Eliminar producto del carrito",
+                description = "Elimina todas las unidades de un producto del carrito."
+        )
+        @ApiResponses({
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "200",
+                        description = "Producto eliminado correctamente"
+                )
+        })
         @DeleteMapping("/productos/{productoId}")
         public ResponseEntity<ApiResponse<CarritoResponseDTO>> eliminarProducto(
                 @PathVariable("productoId") Integer productoId) {
-                CarritoResponseDTO carrito = service.eliminarProductoDTO(productoId);
                 return ResponseEntity.ok(
                         new ApiResponse<>(
                                 true,
                                 "Producto eliminado del carrito correctamente.",
-                                carrito
+                                service.eliminarProductoDTO(productoId)
                         )
                 );
         }
-        // Vacía el carrito del usuario y devuelve todas las unidades al stock.
-        // El carrito sigue existiendo, simplemente queda sin productos.
-        // Vacía el carrito del usuario.
+        // Vacía el carrito.
+        @Operation(
+                summary = "Vaciar carrito",
+                description = "Elimina todos los productos del carrito."
+        )
+        @ApiResponses({
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "200",
+                        description = "Carrito vaciado correctamente"
+                )
+        })
         @DeleteMapping("/mi-carrito/vaciar")
         public ResponseEntity<ApiResponse<CarritoResponseDTO>> vaciar() {
-                CarritoResponseDTO carrito = service.vaciarDTO();
                 return ResponseEntity.ok(
                         new ApiResponse<>(
                                 true,
                                 "Carrito vaciado correctamente.",
-                                carrito
+                                service.vaciarDTO()
                         )
                 );
         }
-
-        // Elimina completamente un carrito por su id.
-        // Este endpoint es más útil para administración que para un usuario final.
+        // Elimina un carrito.
+        @Operation(
+                summary = "Eliminar carrito",
+                description = "Elimina completamente un carrito."
+        )
+        @ApiResponses({
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "200",
+                        description = "Carrito eliminado correctamente"
+                ),
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "404",
+                        description = "Carrito no encontrado"
+                )
+        })
         @DeleteMapping("/{id}")
         public ResponseEntity<ApiResponse<Void>> eliminar(
                 @PathVariable("id") Integer id) {
@@ -153,5 +231,4 @@ public class CarritoController {
                         )
                 );
         }
-    
 }

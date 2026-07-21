@@ -2,143 +2,220 @@ package com.techlab.productos_ecologicos.controllers;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import com.techlab.productos_ecologicos.dto.ApiResponse;
 import com.techlab.productos_ecologicos.dto.ProductoRequestDTO;
 import com.techlab.productos_ecologicos.dto.ProductoResponseDTO;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
 import com.techlab.productos_ecologicos.services.ProductoService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import jakarta.validation.Valid;
 
-@RestController 
-@RequestMapping("/productos")   
+@RestController
+@RequestMapping("/productos")
+@Tag(
+    name = "Productos",
+    description = "Operaciones relacionadas con la gestión de productos ecológicos."
+)
 public class ProductoController {
+        private final ProductoService service;
+        public ProductoController(ProductoService service) {
+                this.service = service;
+        }
 
-    private final ProductoService service;
-    
-    public ProductoController(ProductoService service) {
-        this.service = service;
-    }
-    // Obtiene todos los productos y devuelve una respuesta estándar para el frontend.
-    @GetMapping
-    public ResponseEntity<ApiResponse<List<ProductoResponseDTO>>> listarProductos() {
-        List<ProductoResponseDTO> productos =
-                service.obtenerProductosResponse();
-        return ResponseEntity.ok(
-                new ApiResponse<>(
-                        true,
-                        "Productos obtenidos correctamente.",
-                        productos
+        // Obtiene todos los productos y devuelve solamente los datos necesarios para el frontend.
+        @Operation(
+                summary = "Listar productos",
+                description = "Devuelve la lista completa de productos disponibles."
+        )
+        @ApiResponses({
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "200",
+                description = "Productos obtenidos correctamente"
+                ),
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "500",
+                description = "Error interno del servidor"
                 )
-        );
-    }
-
-    // Obtiene un producto por id y devuelve una respuesta estándar para el frontend.
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<ProductoResponseDTO>> obtenerProducto(
-            @PathVariable("id") Integer id) {
-        ProductoResponseDTO producto =
-                service.obtenerProductoResponse(id);
-        return ResponseEntity.ok(
-                new ApiResponse<>(
-                        true,
-                        "Producto obtenido correctamente.",
-                        producto
-                )
-        );
-    }
-    // Busca productos por nombre y devuelve una respuesta estándar para el frontend.
-    @GetMapping("/nombre/{nombre}")
-    public ResponseEntity<ApiResponse<List<ProductoResponseDTO>>> buscarPorNombre(
-            @PathVariable("nombre") String nombre) {
-        List<ProductoResponseDTO> productos =
-                service.buscarPorNombreResponse(nombre);
-        return ResponseEntity.ok(
-                new ApiResponse<>(
-                        true,
-                        "Productos encontrados.",
-                        productos
-                )
-        );
-    }
-
-    // Busca productos por categoría y devuelve una respuesta estándar para el frontend.
-    @GetMapping("/categoria/{categoria}")
-    public ResponseEntity<ApiResponse<List<ProductoResponseDTO>>> buscarPorCategoria(
-            @PathVariable("categoria") String categoria) {
-        List<ProductoResponseDTO> productos =
-                service.buscarPorCategoriaResponse(categoria);
-        return ResponseEntity.ok(
-                new ApiResponse<>(
-                        true,
-                        "Productos encontrados.",
-                        productos
-                )
-        );
-    }
-    // Crea un producto nuevo utilizando ProductoRequestDTO.
-    // El Service se encarga de convertir el DTO en entidad,
-    // buscar la categoría y guardar el producto.
-    // Crea un nuevo producto y devuelve una respuesta estándar para el frontend.
-    @PostMapping
-    public ResponseEntity<ApiResponse<ProductoResponseDTO>> crearProducto(
-            @Valid @RequestBody ProductoRequestDTO dto) {
-        ProductoResponseDTO producto =
-                service.crearProducto(dto);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(
+        })
+        @GetMapping
+        public ResponseEntity<ApiResponse<List<ProductoResponseDTO>>> listarProductos() {
+                return ResponseEntity.ok(
                         new ApiResponse<>(
                                 true,
-                                "Producto creado correctamente.",
-                                producto
+                                "Productos obtenidos correctamente.",
+                                service.obtenerProductosResponse()
                         )
                 );
-    }
+        }
 
-    // Actualiza un producto existente utilizando ProductoRequestDTO.
-    // Busca el producto existente, modifica sus datos
-    // y devuelve la respuesta preparada para el frontend.
-    // Actualiza un producto existente y devuelve una respuesta estándar para el frontend.
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<ProductoResponseDTO>> actualizarProducto(
-            @PathVariable("id") Integer id,
-            @Valid @RequestBody ProductoRequestDTO dto) {
-
-        ProductoResponseDTO producto =
-                service.actualizarProducto(id, dto);
-
-        return ResponseEntity.ok(
-                new ApiResponse<>(
-                        true,
-                        "Producto actualizado correctamente.",
-                        producto
+        // Obtiene un producto por id y devuelve un DTO evitando exponer la entidad JPA.
+        @Operation(
+                summary = "Obtener producto",
+                description = "Devuelve la información de un producto mediante su identificador."
+        )
+        @ApiResponses({
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "200",
+                description = "Producto encontrado"
+                ),
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "404",
+                description = "Producto no encontrado"
                 )
-        );
-    }
-    // Elimina un producto y devuelve una respuesta estándar para el frontend.
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> eliminarProducto(
-            @PathVariable("id") Integer id) {
+        })
+        @GetMapping("/{id}")
+        public ResponseEntity<ApiResponse<ProductoResponseDTO>> obtenerProducto(
+                @PathVariable("id") Integer id) {
+                return ResponseEntity.ok(
+                        new ApiResponse<>(
+                                true,
+                                "Producto obtenido correctamente.",
+                                service.obtenerProductoResponse(id)
+                        )
+                );
+        }
 
-        service.eliminar(id);
-
-        return ResponseEntity.ok(
-                new ApiResponse<>(
-                        true,
-                        "Producto eliminado correctamente.",
-                        null
+        // Busca productos por nombre y devuelve una lista de DTOs preparados para el frontend.
+        @Operation(
+                summary = "Buscar productos por nombre",
+                description = "Devuelve todos los productos cuyo nombre contiene el texto indicado."
+        )
+        @ApiResponses({
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "200",
+                description = "Búsqueda realizada correctamente"
                 )
-        );
-    }
+        })
+        @GetMapping("/nombre/{nombre}")
+        public ResponseEntity<ApiResponse<List<ProductoResponseDTO>>> buscarPorNombre(
+                @PathVariable("nombre") String nombre) {
+                return ResponseEntity.ok(
+                        new ApiResponse<>(
+                                true,
+                                "Productos encontrados.",
+                                service.buscarPorNombreResponse(nombre)
+                        )
+                );
+        }
+        // Busca productos por categoría y devuelve una lista de DTOs preparados para el frontend.
+        @Operation(
+                summary = "Buscar productos por categoría",
+                description = "Devuelve todos los productos pertenecientes a una categoría."
+        )
+        @ApiResponses({
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "200",
+                description = "Productos encontrados"
+                )
+        })
+        @GetMapping("/categoria/{categoria}")
+        public ResponseEntity<ApiResponse<List<ProductoResponseDTO>>> buscarPorCategoria(
+                @PathVariable("categoria") String categoria) {
+                return ResponseEntity.ok(
+                        new ApiResponse<>(
+                                true,
+                                "Productos encontrados.",
+                                service.buscarPorCategoriaResponse(categoria)
+                        )
+                );
+        }
+
+        // Crea un producto nuevo utilizando ProductoRequestDTO.
+        @Operation(
+                summary = "Crear producto",
+                description = "Registra un nuevo producto en el sistema."
+        )
+        @ApiResponses({
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "201",
+                description = "Producto creado correctamente"
+                ),
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "400",
+                description = "Datos inválidos"
+                ),
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "401",
+                description = "No autenticado"
+                ),
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "403",
+                description = "No autorizado"
+                )
+        })
+        @PostMapping
+        public ResponseEntity<ApiResponse<ProductoResponseDTO>> crearProducto(
+                @Valid @RequestBody ProductoRequestDTO dto) {
+                return ResponseEntity.status(HttpStatus.CREATED)
+                        .body(
+                                new ApiResponse<>(
+                                        true,
+                                        "Producto creado correctamente.",
+                                        service.crearProducto(dto)
+                                )
+                        );
+        }
+
+        // Actualiza un producto existente utilizando ProductoRequestDTO.
+        @Operation(
+                summary = "Actualizar producto",
+                description = "Modifica la información de un producto existente."
+        )
+        @ApiResponses({
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "200",
+                description = "Producto actualizado correctamente"
+                ),
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "404",
+                description = "Producto no encontrado"
+                )
+        })
+        @PutMapping("/{id}")
+        public ResponseEntity<ApiResponse<ProductoResponseDTO>> actualizarProducto(
+                @PathVariable("id") Integer id,
+                @Valid @RequestBody ProductoRequestDTO dto) {
+                return ResponseEntity.ok(
+                        new ApiResponse<>(
+                                true,
+                                "Producto actualizado correctamente.",
+                                service.actualizarProducto(id, dto)
+                        )
+                );
+        }
+
+        // Elimina un producto por id.
+        @Operation(
+                summary = "Eliminar producto",
+                description = "Elimina un producto del sistema."
+        )
+        @ApiResponses({
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "200",
+                description = "Producto eliminado correctamente"
+                ),
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "404",
+                description = "Producto no encontrado"
+                )
+        })
+        @DeleteMapping("/{id}")
+        public ResponseEntity<ApiResponse<Void>> eliminarProducto(
+                @PathVariable("id") Integer id) {
+                service.eliminar(id);
+                return ResponseEntity.ok(
+                        new ApiResponse<>(
+                                true,
+                                "Producto eliminado correctamente.",
+                                null
+                        )
+                );
+        }
 }

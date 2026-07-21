@@ -40,18 +40,26 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // login y register son públicos — no requieren token
                 .requestMatchers("/auth/**").permitAll()
+                // Permite las peticiones preflight de CORS.
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                // Permite acceder a la documentación Swagger.
+                .requestMatchers(
+                        "/v3/api-docs/**",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html"
+                ).permitAll()
                 //productos y categorias son publicos - no requieren token
                 .requestMatchers(HttpMethod.GET, "/productos/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/categorias/**").permitAll()
-                //
+                // Temporalmente permitidos para pruebas.
                 .requestMatchers(HttpMethod.POST, "/productos/**").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/productos/**").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "/productos/**").permitAll()
                 //.requestMatchers(HttpMethod.POST, "/productos/**").hasRole("ADMIN")
                 // .requestMatchers(HttpMethod.PUT, "/productos/**").hasRole("ADMIN")
                 // .requestMatchers(HttpMethod.DELETE, "/productos/**").hasRole("ADMIN")
-                // todo lo demás requiere un token válido
+                
+                // Todo lo demás requiere autenticación()un token válido.
                 .anyRequest().authenticated()
             )
 

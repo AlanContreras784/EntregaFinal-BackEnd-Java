@@ -46,17 +46,39 @@ public class SecurityConfig {
                 .requestMatchers("/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html").permitAll()
+                // ======================================================
+                // PRODUCTOS Y CATEGORÍAS
+                // ======================================================
+                // Productos y categorías son públicos para consultas.
                 //productos y categorias son publicos - no requieren token
                 .requestMatchers(HttpMethod.GET,"/productos/**",
                                                 "/categorias/**").permitAll()
+                // ======================================================
+                // GESTIÓN DE USUARIOS
+                // ======================================================
+                // Solamente ADMIN puede acceder a los endpoints
+                // relacionados con usuarios.
+                // USER → 403 Forbidden
+                // ADMIN → acceso permitido.
+                .requestMatchers("/usuarios/**").hasRole("ADMIN")
+                // ======================================================
+                // PRODUCTOS - TEMPORAL
+                // ======================================================
                 // Temporalmente permitidos para pruebas.
-                .requestMatchers(HttpMethod.POST, "/productos/**").permitAll()
-                .requestMatchers(HttpMethod.PUT, "/productos/**").permitAll()
-                .requestMatchers(HttpMethod.DELETE, "/productos/**").permitAll()
-                //.requestMatchers(HttpMethod.POST, "/productos/**").hasRole("ADMIN")
-                // .requestMatchers(HttpMethod.PUT, "/productos/**").hasRole("ADMIN")
-                // .requestMatchers(HttpMethod.DELETE, "/productos/**").hasRole("ADMIN")
-                
+                // .requestMatchers(HttpMethod.POST, "/productos/**").permitAll()
+                // .requestMatchers(HttpMethod.PUT, "/productos/**").permitAll()
+                // .requestMatchers(HttpMethod.DELETE, "/productos/**").permitAll()
+
+                // ======================================================
+                // CRUD DE PRODUCTOS  
+                // ======================================================
+                .requestMatchers(HttpMethod.POST, "/productos/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/productos/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/productos/**").hasRole("ADMIN")
+                                
+                // ======================================================
+                // RESTO DE ENDPOINTS
+                // ======================================================
                 // Todo lo demás requiere un usuario autenticado mediante JWT.
                 .anyRequest().authenticated()
             )

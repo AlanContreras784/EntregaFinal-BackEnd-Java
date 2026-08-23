@@ -58,6 +58,13 @@ public class ProductoResponseDTO {
             example = "https://misitio.com/imagenes/jabon.jpg"
     )
     private String imagenUrl;
+
+
+    @Schema(
+        description = "Indica si el producto está marcado como destacado",
+        example = "true"
+    )
+    private Boolean destacado;
     // Información de la categoría.
     //
     // A diferencia del RequestDTO, aquí devolvemos un CategoriaDTO

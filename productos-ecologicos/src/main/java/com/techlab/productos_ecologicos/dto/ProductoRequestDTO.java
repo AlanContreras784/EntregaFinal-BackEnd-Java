@@ -79,6 +79,15 @@ public class ProductoRequestDTO {
     )
     @NotBlank(message = "Por favor, selecciona una imagen para continuar")
     private String imagenUrl;
+
+
+    @Schema(
+        description = "Indica si el producto aparece en la sección de productos destacados",
+        example = "false",
+        requiredMode = Schema.RequiredMode.REQUIRED
+    )
+    @NotNull(message = "El campo destacado no puede ser nulo")
+    private Boolean destacado = false;
     // Identificador de la categoría seleccionada.
     //
     // El frontend solamente envía el ID.

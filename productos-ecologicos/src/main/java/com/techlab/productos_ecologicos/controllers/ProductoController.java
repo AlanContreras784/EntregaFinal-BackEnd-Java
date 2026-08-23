@@ -55,6 +55,33 @@ public class ProductoController {
                 );
         }
 
+        // Obtiene solamente los productos marcados como destacados.
+        // Devuelve DTOs para evitar exponer directamente la entidad JPA.
+        @Operation(
+                summary = "Listar productos destacados",
+                description = "Devuelve todos los productos marcados como destacados."
+        )
+        @ApiResponses({
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "200",
+                        description = "Productos destacados obtenidos correctamente"
+                ),
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "500",
+                        description = "Error interno del servidor"
+                )
+        })
+        @GetMapping("/destacados")
+        public ResponseEntity<ApiResponse<List<ProductoResponseDTO>>> listarProductosDestacados() {
+                return ResponseEntity.ok(
+                        new ApiResponse<>(
+                                true,
+                                "Productos destacados obtenidos correctamente.",
+                                service.obtenerProductosDestacados()
+                        )
+                );
+        }
+
         // Obtiene un producto por id y devuelve un DTO evitando exponer la entidad JPA.
         @Operation(
                 summary = "Obtener producto",

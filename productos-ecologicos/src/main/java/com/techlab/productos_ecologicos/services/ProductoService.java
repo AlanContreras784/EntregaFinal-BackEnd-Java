@@ -63,6 +63,11 @@ public class ProductoService {
     public List<ProductoResponseDTO> obtenerProductosResponse() {
         return ProductoMapper.toDTOList(listarTodos());
     }
+    // Obtiene solamente los productos marcados como destacados
+    // y los convierte a ProductoResponseDTO para enviarlos al frontend.
+    public List<ProductoResponseDTO> obtenerProductosDestacados() {
+        return ProductoMapper.toDTOList(repository.findByDestacadoTrue());
+    }
     // Obtiene un producto por id y lo convierte a DTO para enviarlo al frontend.
     public ProductoResponseDTO obtenerProductoResponse(Integer id) {
         Producto producto = obtenerPorId(id);

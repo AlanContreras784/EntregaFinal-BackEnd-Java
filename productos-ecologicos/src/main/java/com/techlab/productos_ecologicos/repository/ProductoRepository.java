@@ -14,4 +14,5 @@ public interface ProductoRepository extends JpaRepository<Producto, Integer> {
 //     List<Producto> buscarPorCategoria(@Param("nombreCategoria") String nombreCategoria);
 
     List<Producto> findByCategoriaNombreContainingIgnoreCase(String nombreCategoria);
+    List<Producto> findByDestacadoTrue();
  }

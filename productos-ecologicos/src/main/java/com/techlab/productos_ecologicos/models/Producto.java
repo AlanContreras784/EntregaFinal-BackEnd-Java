@@ -43,6 +43,10 @@ public class Producto {
     @Column(name = "imagen_url", length = 200)
     private String imagenUrl;
 
+    @NotNull(message = "El campo destacado no puede ser nulo")
+    @Column(name= "destacado", nullable = false)
+    private Boolean destacado = false;
+
     @ManyToOne
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;

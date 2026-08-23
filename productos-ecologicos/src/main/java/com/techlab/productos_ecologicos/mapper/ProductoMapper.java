@@ -22,6 +22,7 @@ public class ProductoMapper {
         dto.setDescripcion(producto.getDescripcion());
         dto.setStock(producto.getStock());
         dto.setImagenUrl(producto.getImagenUrl());
+        dto.setDestacado(producto.getDestacado());
         // Convierte la categoría del producto a CategoriaDTO.
         if (producto.getCategoria() != null) {
             CategoriaDTO categoriaDTO = new CategoriaDTO();
@@ -57,6 +58,7 @@ public class ProductoMapper {
         producto.setDescripcion(dto.getDescripcion());
         producto.setStock(dto.getStock());
         producto.setImagenUrl(dto.getImagenUrl());
+        producto.setDestacado(dto.getDestacado());
         producto.setCategoria(categoria);
         return producto;
     }
@@ -76,6 +78,7 @@ public class ProductoMapper {
         producto.setDescripcion(dto.getDescripcion());
         producto.setStock(dto.getStock());
         producto.setImagenUrl(dto.getImagenUrl());
+        producto.setDestacado(dto.getDestacado());
         producto.setCategoria(categoria);
     }
 }

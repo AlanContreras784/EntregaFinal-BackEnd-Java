@@ -3,6 +3,7 @@ package com.techlab.productos_ecologicos.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -124,6 +125,21 @@ public class GlobalExceptionHandler {
                 "Usuario o contraseña incorrectos."
         );
     }
+
+    // Se ejecuta cuando el usuario existe pero su cuenta
+        // todavía está deshabilitada.
+        //
+        // En nuestro sistema esto significa que todavía
+        // no confirmó su dirección de email.
+        @ExceptionHandler(DisabledException.class)
+        public ResponseEntity<ApiError> manejarCuentaNoConfirmada(
+                DisabledException ex) {
+
+        return crearRespuestaError(
+                HttpStatus.UNAUTHORIZED,
+                "La cuenta no está confirmada. Revisa tu correo electrónico."
+        );
+        }
 
     // Se ejecuta cuando el usuario autenticado no tiene permisos para acceder al recurso.
     @ExceptionHandler(AuthorizationDeniedException.class)

@@ -23,51 +23,96 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UsuarioRepository usuarioRepository;
+
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
+    protected void doFilterInternal(
+            HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain)
             throws ServletException, IOException {
-        // 1. Extraer el token del header Authorization
+
         try {
+
+            // ======================================================
+            // 1. Extraer el token del header Authorization
+            // ======================================================
+
             final String token = extraerTokenDelRequest(request);
-            // 2. Si no hay token, continuar la cadena sin autenticar.
-            // Spring Security bloqueará el request si el endpoint lo requiere.
+
+            // ======================================================
+            // 2. Si no hay token, continuar normalmente.
+            //
+            // Los endpoints públicos podrán continuar.
+            // Los endpoints protegidos serán bloqueados
+            // posteriormente por Spring Security.
+            // ======================================================
+
             if (token == null) {
                 filterChain.doFilter(request, response);
                 return;
             }
-            // 3. Extraer el username del payload del token
-            final String username = jwtService.obtenerUsername(token);
-            // 4. Condición doble:
-            // - username != null: el token tenía un username válido
-            // - getAuthentication() == null: el usuario no fue autenticado antes en esta
-            // cadena
-            // La segunda condición evita pisar una autenticación ya establecida.
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                // 5. Buscar el usuario en la base de datos
-                Usuario usuario = usuarioRepository.findByUsername(username)
-                        .orElseThrow();
-                // 6. Validar: ¿el token corresponde a este usuario y no expiró?
-                if (usuario != null && jwtService.esTokenValido(token, usuario)) {
-                    // 7. Crear el objeto de autenticación.
-                    // Parámetros: (usuario, credenciales, permisos)
-                    // Las credenciales van null — la contraseña ya fue verificada en el login,
-                    // no tiene sentido cargarla en memoria en este punto.
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            usuario, null, usuario.getAuthorities());
-                    authToken.setDetails(
-                            new WebAuthenticationDetailsSource().buildDetails(request));
 
-                    // Registrar en el SecurityContextHolder.
-                    // A partir de acá Spring Security sabe que este usuario está autenticado.
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
+            // ======================================================
+            // 3. Extraer username del JWT
+            // ======================================================
+
+            final String username = jwtService.obtenerUsername(token);
+
+            // ======================================================
+            // 4. Si existe username y todavía no hay autenticación,
+            // buscamos al usuario.
+            // ======================================================
+
+            if (username != null
+                    && SecurityContextHolder
+                            .getContext()
+                            .getAuthentication() == null) {
+
+                Usuario usuario = usuarioRepository
+                        .findByUsername(username)
+                        .orElse(null);
+
+                // ==================================================
+                // 5. Validar token
+                // ==================================================
+
+                if (usuario != null
+                        && jwtService.esTokenValido(token, usuario)) {
+
+                    // ==============================================
+                    // 6. Crear autenticación
+                    // ==============================================
+
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            usuario,
+                            null,
+                            usuario.getAuthorities());
+
+                    authToken.setDetails(
+                            new WebAuthenticationDetailsSource()
+                                    .buildDetails(request));
+
+                    // ==============================================
+                    // 7. Registrar usuario autenticado
+                    // ==============================================
+
+                    SecurityContextHolder
+                            .getContext()
+                            .setAuthentication(authToken);
                 }
             }
-            // 8. Continuar con el siguiente filtro en la cadena
-            filterChain.doFilter(request, response);
+
         } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+            // ======================================================
+            // El JWT es inválido o está alterado.
+            //
+            // No dejamos continuar una autenticación inválida.
+            // ======================================================
+
+            response.setStatus(
+                    HttpServletResponse.SC_UNAUTHORIZED);
+
             response.setContentType("application/json");
 
             response.getWriter().write("""
@@ -76,8 +121,22 @@ public class JwtFilter extends OncePerRequestFilter {
                         "message": "Token inválido o alterado"
                     }
                     """);
+
+            return;
         }
+
+        // ==========================================================
+        // MUY IMPORTANTE:
+        //
+        // El filterChain queda FUERA del try/catch.
+        //
+        // De esta manera, una excepción posterior no puede ser
+        // convertida accidentalmente en un 401 por este filtro.
+        // ==========================================================
+
+        filterChain.doFilter(request, response);
     }
+
     // Extrae el token del header "Authorization: Bearer <token>"
     // Corta los primeros 7 caracteres ("Bearer ") para quedarse solo con el token
     private String extraerTokenDelRequest(HttpServletRequest request) {

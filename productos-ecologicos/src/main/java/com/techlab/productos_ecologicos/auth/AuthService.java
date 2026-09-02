@@ -177,9 +177,18 @@ public class AuthService {
                 //
                 // Por ahora EmailService solamente registra
                 // la información en la consola.
+                // Enviamos el correo de confirmación al usuario.
                 emailService.enviarEmailConfirmacion(
                                 usuario.getEmail(),
                                 token);
+                // Enviamos una notificación a Cero Huella
+                // informando que se registró un nuevo usuario.
+                emailService.enviarNotificacionNuevoRegistro(
+                        usuario.getUsername(),
+                        usuario.getEmail(),
+                        usuario.getNombre(),
+                        usuario.getApellido()
+                );
 
                 // No se genera JWT.
                 //

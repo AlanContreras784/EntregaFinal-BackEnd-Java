@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -61,7 +62,16 @@ public class Usuario implements UserDetails {
     @Builder.Default
     private Boolean enabled = true;
 
+    /*
+     * No incluir carritos en toString().
+     *
+     * La colección es administrada por Hibernate y puede
+     * encontrarse en estado LAZY. Si Lombok intenta acceder
+     * a ella fuera de una sesión Hibernate, puede producir
+     * LazyInitializationException.
+     */
     @JsonIgnore
+    @ToString.Exclude
     @OneToMany(mappedBy = "usuario")
     private List<Carrito> carritos;
 
